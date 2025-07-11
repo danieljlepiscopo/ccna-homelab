@@ -6,7 +6,16 @@ This is my home lab to help me prepare for the Cisco CCNA 200-301. I'm using rea
 - Cisco Catalyst 2960/3560 Switches (x3)
 - Windows 10 PC
 
-## Topology
+## Topology Overview
+** PC (192.168.1.10)
+   |
+SW1 (VLAN 99: 192.168.1.1)
+   |
+R1 (Gi0/1: 192.168.1.2, Lo0: 192.168.2.1)
+   |
+R2 (Lo0: 192.168.4.1)
+   |
+R3 (Lo0: 192.168.6.1)**
 
 ## Goals
 1. Cable and Power On Devices Correctly ✅ Completed
@@ -36,6 +45,9 @@ This is my home lab to help me prepare for the Cisco CCNA 200-301. I'm using rea
 | R2     | Lo0       | 192.168.4.1/24  |
 | R3     | Gi0/1     | 192.168.5.2/30  |
 | R3     | Lo0       | 192.168.6.1/24  |
+
+## Routing Path
+PC > SW1 > R1 > R2 > R3 (and back)
 
 ## Static Routes	
 | Router | Static Routes                |

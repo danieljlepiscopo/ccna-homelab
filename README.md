@@ -1,5 +1,5 @@
 # CCNA Homelab
-This is my home lab to help me prepare for the Cisco CCNA 200-301. I'm using real Cisco IOS routers and switches!
+This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. I'm using real Cisco IOS routers and switches to build practical skills in networking concepts like VLANs, STP, static routing, and more. The goal is to simulate a real-world enterprise environment and reinforce theory with hands-on experience.
 
 ## Devices Used
 - Cisco 1921 Routers (x3)
@@ -8,13 +8,15 @@ This is my home lab to help me prepare for the Cisco CCNA 200-301. I'm using rea
 - Windows 10 PC
 
 ## Topology Overview
-PC (192.168.1.10)
-SW1 (VLAN 99: 192.168.1.1)
-SW2 (VLAN 99: 192.168.1.21)
-SW3 (VLAN 99: 192.168.1.22)
-R1 (Gi0/1: 192.168.1.2, Lo0: 192.168.2.1)
-R2 (Lo0: 192.168.4.1)
-R3 (Lo0: 192.168.6.1)
+1. PC (192.168.1.10)
+2. SW1 (VLAN 99: 192.168.1.1)
+3. SW2 (VLAN 99: 192.168.1.21)
+4. SW3 (VLAN 99: 192.168.1.22)
+5. R1 (Gi0/1: 192.168.1.2, Lo0: 192.168.2.1)
+6. R2 (Lo0: 192.168.4.1)
+7. R3 (Lo0: 192.168.6.1)
+
+![CCNA Homelab Topology](topology/logical-topology.png)
 
 ## Goals
 1. Cable and Power On Devices Correctly      | ✅ Completed
@@ -27,7 +29,7 @@ R3 (Lo0: 192.168.6.1)
 8. Implement Inter-VLAN Routing              | 🔲 Not Started
 9. Configure DHCP and NAT                    | 🔲 Not Started
 10. Set Up Basic ACLs and Port Security      | 🔲 Not Started
-11. Set Up dynamic routing protocols         | 🔲 Not Started
+11. Set Up Dynamic Routing Protocols         | 🔲 Not Started
 
 ## Key Subnets
 | Device | Interface | IP Address      |
@@ -35,7 +37,7 @@ R3 (Lo0: 192.168.6.1)
 | PC     | NIC       | 192.168.1.10/24 |
 | SW1    | VLAN 99   | 192.168.1.1/24  |
 | SW2    | VLAN 99   | 192.168.1.21/24 |
-| SW2    | VLAN 99   | 192.168.1.22/24 |
+| SW3    | VLAN 99   | 192.168.1.22/24 |
 | R1     | Gi0/1     | 192.168.1.2/24  |
 | R1     | Gi0/0     | 192.168.3.1/30  |
 | R1     | Lo0       | 192.168.2.1/24  |
@@ -87,8 +89,12 @@ ccna-homelab/
  ```
 
 ## Skills Demonstrated
-- Computer Networking
-- Cisco IOS
+- Cisco IOS configuration and CLI navigation
+- VLANs and 802.1Q trunking
+- STP and RSTP implementation
+- IP subnetting and static routing
+- SSH and secure remote access setup
+- Layer 2/3 troubleshooting
 
 ## License
 - MIT License

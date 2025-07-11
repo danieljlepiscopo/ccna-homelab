@@ -1,0 +1,394 @@
+Current configuration : 3194 bytes
+!
+version 15.0
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname SW1
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$gpFY$E/p2EC4.uoDK4h3B3XRfO.
+!
+username dan secret 5 $1$gCmc$8YvhDKu8a//2quiCD.vU11
+no aaa new-model
+system mtu routing 1500
+ip domain-name homelab.local
+!
+!
+!
+!
+!
+crypto pki trustpoint TP-self-signed-2046721536
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2046721536
+ revocation-check none
+ rsakeypair TP-self-signed-2046721536
+!
+!
+crypto pki certificate chain TP-self-signed-2046721536
+!
+!
+!
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree vlan 99 priority 24576
+!
+vlan internal allocation policy ascending
+!
+ip ssh version 2
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface FastEthernet0/1
+ description Downlink to SW2 Fa0/1
+ switchport trunk native vlan 99
+ spanning-tree guard root
+!
+interface FastEthernet0/2
+ description Downlink to SW3 Fa0/1
+ switchport trunk native vlan 99
+ spanning-tree guard root
+!
+interface FastEthernet0/3
+ description Connection to PC (Management Access - VLAN 99)
+ switchport access vlan 99
+ switchport mode access
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 2cf0.5d97.5625
+ switchport port-security
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/4
+ description Downlink to R1 Gi0/1 (VLAN 99)
+ switchport access vlan 99
+ switchport mode access
+!
+interface FastEthernet0/5
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/6
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/7
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/8
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/9
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/10
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/11
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/12
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/13
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/14
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/15
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/16
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/17
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/18
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/19
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/20
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/21
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/22
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/23
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/24
+ description Not in Use
+ shutdown
+!
+interface GigabitEthernet0/1
+ description Not in Use
+ shutdown
+!
+interface GigabitEthernet0/2
+ description Not in Use
+ shutdown
+!
+interface Vlan1
+ no ip address
+ shutdown
+!
+interface Vlan99
+ description Management for connected ports (Fa0/3-Fa0/4)
+ ip address 192.168.1.1 255.255.255.0
+!
+ip http server
+ip http secure-server
+!
+!
+!
+!
+!
+!
+line con 0
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ login
+!
+end
+
+SW1#
+SW1#
+SW2>
+SW2>en
+Password:
+SW2#
+SW2#
+SW2#show running
+SW2#show running-config
+Building configuration...
+
+Current configuration : 3108 bytes
+!
+version 15.0
+no service pad
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname SW2
+!
+boot-start-marker
+boot-end-marker
+!
+enable secret 5 $1$AHHQ$vP8ajDmL8oXtZ86L3HmTB.
+!
+username dan secret 5 $1$CpnB$TFbILOhs9vsAEY2TAZakE/
+no aaa new-model
+system mtu routing 1500
+!
+!
+ip domain-name homelab.local
+!
+!
+crypto pki trustpoint TP-self-signed-2881561856
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-2881561856
+ revocation-check none
+ rsakeypair TP-self-signed-2881561856
+!
+!
+crypto pki certificate chain TP-self-signed-2881561856
+!
+!
+!
+!
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree vlan 99 priority 28672
+!
+vlan internal allocation policy ascending
+!
+ip ssh version 2
+!
+!
+!
+!
+interface Port-channel2
+ description EtherChannel to SW3
+ switchport trunk native vlan 99
+ switchport mode trunk
+!
+interface FastEthernet0/1
+ description Uplink to SW1 Fa0/1 (Native VLAN 99 Trunk)
+ switchport trunk native vlan 99
+ switchport mode trunk
+!
+interface FastEthernet0/2
+ description EtherChannel to SW3
+ switchport trunk native vlan 99
+ switchport mode trunk
+ channel-group 2 mode active
+ spanning-tree guard loop
+!
+interface FastEthernet0/3
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/4
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/5
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/6
+ description EtherChannel to SW3
+ switchport trunk native vlan 99
+ switchport mode trunk
+ channel-group 2 mode active
+!
+interface FastEthernet0/7
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/8
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/9
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/10
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/11
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/12
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/13
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/14
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/15
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/16
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/17
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/18
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/19
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/20
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/21
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/22
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/23
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/24
+ description Not in Use
+ shutdown
+!
+interface GigabitEthernet0/1
+ description Not in Use
+ shutdown
+!
+interface GigabitEthernet0/2
+ description Not in Use
+ shutdown
+!
+interface Vlan1
+ no ip address
+ no ip route-cache
+ shutdown
+!
+interface Vlan99
+ description Management
+ ip address 192.168.1.21 255.255.255.0
+ no ip route-cache
+!
+ip http server
+ip http secure-server
+!
+!
+line con 0
+line vty 0 4
+ login local
+ transport input ssh
+line vty 5 15
+ login
+!
+end

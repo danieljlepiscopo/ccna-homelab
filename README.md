@@ -1,5 +1,5 @@
 # CCNA Homelab
-This is my home lab to help me prepare for the Cisco CCNA 200-301. I'm using real Cisco routers and switches
+This is my home lab to help me prepare for the Cisco CCNA 200-301. I'm using real Cisco IOS routers and switches!
 
 ## Devices Used
 - Cisco 1921 Routers (x3)
@@ -7,15 +7,13 @@ This is my home lab to help me prepare for the Cisco CCNA 200-301. I'm using rea
 - Windows 10 PC
 
 ## Topology Overview
-** PC (192.168.1.10)
-   |
+PC (192.168.1.10)
 SW1 (VLAN 99: 192.168.1.1)
-   |
+SW2 (VLAN 99: 192.168.1.21)
+SW3 (VLAN 99: 192.168.1.22)
 R1 (Gi0/1: 192.168.1.2, Lo0: 192.168.2.1)
-   |
 R2 (Lo0: 192.168.4.1)
-   |
-R3 (Lo0: 192.168.6.1)**
+R3 (Lo0: 192.168.6.1)
 
 ## Goals
 1. Cable and Power On Devices Correctly ✅ Completed

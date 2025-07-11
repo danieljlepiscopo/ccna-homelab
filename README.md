@@ -8,6 +8,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 - Windows 10 PC
 
 ## Topology Overview
+![CCNA Homelab Topology](topology/logical-diagram.png)
 1. PC (192.168.1.10)
 2. SW1 (VLAN 99: 192.168.1.1)
 3. SW2 (VLAN 99: 192.168.1.21)
@@ -15,8 +16,6 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 5. R1 (Gi0/1: 192.168.1.2, Lo0: 192.168.2.1)
 6. R2 (Lo0: 192.168.4.1)
 7. R3 (Lo0: 192.168.6.1)
-
-![CCNA Homelab Topology](topology/ccna_homelab.jpg)
 
 ## Goals
 1. Cable and Power On Devices Correctly      | ✅ Completed

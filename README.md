@@ -62,3 +62,33 @@ PC > SW1 > R1 > R2 > R3 (and back)
 | R3     | 192.168.2.0/24 → 192.168.5.1 |
 | R3     | 192.168.3.0/30 → 192.168.5.1 |
 | R3     | 192.168.4.0/24 → 192.168.5.1 |
+
+## Project Structure
+ ```
+ccna-homelab/
+├── README.md
+├── topology/
+│   ├── logical-topology.png
+│   ├── physical-topology.png
+│   └── topology-notes.md
+├── configs/
+│   ├── routers/
+│   │   ├── R1-running-config.txt
+│   │   ├── R2-running-config.txt
+│   │   └── R3-running-config.txt
+│   └── switches/
+│   │   ├── SW1-running-config.txt
+│   │   ├── SW2-running-config.txt
+│   │   └── SW3-running-config.txt
+├── labs/
+│   └── 01-cabling-devices.md
+└── notes/
+    └── 01-cabling-device.md
+ ```
+
+## Skills Demonstrated
+- Computer Networking
+- Cisco IOS
+
+## License
+- MIT License

@@ -16,7 +16,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 6. R2 (Lo0: 192.168.4.1)
 7. R3 (Lo0: 192.168.6.1)
 
-![CCNA Homelab Topology](topology/logical-topology.png)
+![CCNA Homelab Topology](topology/ccna_homelab.jpg)
 
 ## Goals
 1. Cable and Power On Devices Correctly      | ✅ Completed

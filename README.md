@@ -3,7 +3,8 @@ This is my home lab to help me prepare for the Cisco CCNA 200-301. I'm using rea
 
 ## Devices Used
 - Cisco 1921 Routers (x3)
-- Cisco Catalyst 2960/3560 Switches (x3)
+- Cisco Catalyst 2960 Switches (x2)
+- Cisco Catalyst 3560 Switches (x1)
 - Windows 10 PC
 
 ## Topology Overview
@@ -16,17 +17,17 @@ R2 (Lo0: 192.168.4.1)
 R3 (Lo0: 192.168.6.1)
 
 ## Goals
-1. Cable and Power On Devices Correctly ✅ Completed
-2. Set Hostnames and Interface Descriptions ✅ Completed
-3. Configure Device IPs and Default Gateways ✅ Completed
-4. Enable SSH and Remote Access ✅ Completed
-5. Configure VLANs and Trunking ✅ Completed
-6. Implement STP/RSTP ✅ Completed
-7. Configure Static Routing ✅ Completed
-8. Implement Inter-VLAN Routing 🔲 Not Started
-9. Configure DHCP and NAT 🔲 Not Started
-10. Set Up Basic ACLs and Port Security 🔲 Not Started
-11. Set up routing protocols like RIP, OSPF, and or EIGRP between routers 🔲 Not Started
+1. Cable and Power On Devices Correctly      | ✅ Completed
+2. Set Hostnames and Interface Descriptions  | ✅ Completed
+3. Configure Device IPs and Default Gateways | ✅ Completed
+4. Enable SSH and Remote Access              | ✅ Completed
+5. Configure VLANs and Trunking              | ✅ Completed
+6. Implement STP/RSTP                        | ✅ Completed
+7. Configure Static Routing                  | ✅ Completed
+8. Implement Inter-VLAN Routing              | 🔲 Not Started
+9. Configure DHCP and NAT                    | 🔲 Not Started
+10. Set Up Basic ACLs and Port Security      | 🔲 Not Started
+11. Set Up dynamic routing protocols         | 🔲 Not Started
 
 ## Key Subnets
 | Device | Interface | IP Address      |
@@ -66,6 +67,7 @@ PC > SW1 > R1 > R2 > R3 (and back)
 ccna-homelab/
 ├── README.md
 ├── topology/
+│   ├── ccna-homelab.jpg
 │   ├── logical-topology.png
 │   ├── physical-topology.png
 │   └── topology-notes.md
@@ -75,9 +77,9 @@ ccna-homelab/
 │   │   ├── R2-running-config.txt
 │   │   └── R3-running-config.txt
 │   └── switches/
-│   │   ├── SW1-running-config.txt
-│   │   ├── SW2-running-config.txt
-│   │   └── SW3-running-config.txt
+│       ├── SW1-running-config.txt
+│       ├── SW2-running-config.txt
+│       └── SW3-running-config.txt
 ├── labs/
 │   └── 01-cabling-devices.md
 └── notes/

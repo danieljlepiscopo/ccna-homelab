@@ -1,0 +1,124 @@
+Current configuration : 1660 bytes
+!
+version 15.8
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$BvlJ$72m.2ogxr61uGcxxNXU4//
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip domain name homelab.local
+ip cef
+no ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+!
+license udi pid CISCO1921/K9 sn FJC2039L2H2
+license boot module c1900 technology-package securityk9
+license boot module c1900 technology-package datak9
+!
+!
+username dan secret 5 $1$9glZ$m9x6DMCnOcRjhOPTBe4ji1
+username daniel privilege 15 secret 5 $1$2GSu$pu3RSSk1bO3NR9j4kxPGk.
+!
+redundancy
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ description Internal LAN
+ ip address 192.168.4.1 255.255.255.0
+!
+interface Embedded-Service-Engine0/0
+ description Not in Use
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/0
+ description Downlink to R3 Gi0/1
+ ip address 192.168.5.1 255.255.255.252
+ duplex auto
+ speed auto
+!
+interface GigabitEthernet0/1
+ description Uplink to R1 Gi0/0
+ ip address 192.168.3.2 255.255.255.252
+ duplex auto
+ speed auto
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+ip route 192.168.1.0 255.255.255.0 192.168.3.1
+ip route 192.168.2.0 255.255.255.0 192.168.3.1
+ip route 192.168.6.0 255.255.255.0 192.168.5.2
+ip ssh version 2
+!
+ipv6 ioam timestamp
+!
+!
+!
+control-plane
+!
+!
+line con 0
+line aux 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport output lat pad telnet rlogin lapb-ta mop udptn v120 ssh
+ stopbits 1
+line vty 0 4
+ login local
+ transport input ssh
+!
+scheduler allocate 20000 1000
+!
+end

@@ -77,7 +77,7 @@ ccna-homelab/
 │       ├── SW2-running-config.txt
 │       └── SW3-running-config.txt
 ├── labs/
-│   └── 01-cabling-devices.md
+│   └── lab1_cabling_setup.md
 └── notes/
     └── 01-cabling-device.md
  ```

@@ -1,10 +1,12 @@
 ## Lab 1: Physical Cabling and Rack Setup
 
-**Objective**: Power on, cable, and logically design a physical lab topology using Cisco routers/switches. This foundational step enables me to console into devices, assign IPs, and prepare for network configuration labs.
+**Objective**: Power on, cable, and logically design a physical lab topology using Cisco routers/switches. This foundational step enables me to connect to devices, assign IPs, and prepare for network configuration labs.
 
 Less of a traditional “lab” and more of an actual necessity for me to power on, connect, and be able to configure my Cisco switches and routers.  This beginning step is what is needed for me to configure devices and create a topology to mimic real-world networks.
 
-![lab1_rack_no_cables.jpg](attachment:90e7f168-14c4-4b96-ae2d-771a94ee8656:Cisco_switches_routers.jpg)
+<center>
+  <img width="400" height="500" alt="three_tier" class="center" src="https://github.com/user-attachments/assets/3cb35778-72e6-4fe5-be0a-ed7a7a70aadf" />
+</center>
 
 To start this, I needed to understand what type of topology I needed; most networks today use a three-tier approach:
 
@@ -12,7 +14,9 @@ To start this, I needed to understand what type of topology I needed; most netwo
 2. **Distribution**
 3. **Access**
 
-![image.png](attachment:a0bc699d-bb7c-47d2-a261-245721dafc06:image.png)
+<center>
+  <img width="400" height="400" alt="three_tier" class="center" src="https://github.com/user-attachments/assets/5d4fae70-06e7-4f28-8e58-a71776819e6d" />
+</center>
 
 - **Core Layer** - Being the core of the network (the backbone), where L3 switches and routers typically help with the forwarding of IP traffic.
 - **Distribution Layer** - This is where L3 devices, like L3 switches and routers, distribute data to end hosts.
@@ -23,7 +27,9 @@ For my topology, I decided to go with the “Collapsed Core”, where the two-ti
 1. **Core**
 2. **Access**
 
-![image.png](attachment:b407ff1f-1457-45f3-952f-c4cf9ce9383c:image.png)
+<center>
+  <img width="875" height="280" alt="collapsed_core" class="center" src="https://github.com/user-attachments/assets/ef00b30b-1aa4-4a57-a4d5-2201ec2f053b" />
+</center>
 
 - I ended up choosing this topology approach because it reflects the three-tier approach (aside from the distribution layer), but it was practical enough with the 6 devices that I have.
 

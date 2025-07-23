@@ -18,7 +18,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 5. Configure VLANs and Trunking              | ✅ Completed
 6. Implement STP/RSTP                        | ✅ Completed
 7. Configure Static Routing                  | ✅ Completed
-8. Implement Inter-VLAN Routing              | 🔲 Not Started
+8. Implement Inter-VLAN Routing              | ✅ Completed
 9. Configure DHCP and NAT                    | 🔲 Not Started
 10. Set Up Basic ACLs and Port Security      | 🔲 Not Started
 11. Set Up Dynamic Routing Protocols         | 🔲 Not Started
@@ -77,7 +77,8 @@ ccna-homelab/
 │       ├── SW2-running-config.txt
 │       └── SW3-running-config.txt
 ├── labs/
-│   └── lab1_cabling_setup.md
+│   ├── lab1_cabling_setup.md
+│   └── lab8_inter-vlan_routing.md
 └── notes/
     └── 01-cabling-device.md
  ```

@@ -5,7 +5,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 - Cisco 1921 Routers (x3)
 - Cisco Catalyst 2960 Switches (x2)
 - Cisco Catalyst 3560 Switches (x1)
-- Windows 10 PC
+- Windows 10 PC (Oracle VM with Win10 & Ubuntu VMs)
 
 ## Topology Overview
 ![CCNA Homelab Topology](topology/logical-diagram.png)

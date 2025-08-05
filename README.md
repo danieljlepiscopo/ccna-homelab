@@ -19,9 +19,13 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 6. Implement STP/RSTP                        | ✅ Completed
 7. Configure Static Routing                  | ✅ Completed
 8. Implement Inter-VLAN Routing              | ✅ Completed
-9. Configure DHCP and NAT                    | 🔲 Not Started
+9. Configure DHCP and DNS                    | 🔲 Not Started
 10. Set Up Basic ACLs and Port Security      | 🔲 Not Started
-11. Set Up Dynamic Routing Protocols         | 🔲 Not Started
+11. Dynamic Routing (RIP, EIGRP, and OSPF)   | 🔲 Not Started
+12. Configure and Verify IPv6 Routing        | 🔲 Not Started
+13. Basic NAT/NAT Overload (PAT) Simulation  | 🔲 Not Started
+14. CDP/LLDP Verification                    | 🔲 Not Started
+15. Gateway Redundancy with HSRP             | 🔲 Not Started
 
 ## Key Subnets
 | Device | Interface | IP Address      |

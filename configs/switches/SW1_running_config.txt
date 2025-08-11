@@ -1,4 +1,8 @@
-Current configuration : 3194 bytes
+Building configuration...
+
+Current configuration : 4424 bytes
+!
+! Last configuration change at 06:37:13 UTC Mon Mar 1 1993 by dan
 !
 version 15.0
 no service pad
@@ -17,11 +21,27 @@ enable secret 5 $1$gpFY$E/p2EC4.uoDK4h3B3XRfO.
 username dan secret 5 $1$gCmc$8YvhDKu8a//2quiCD.vU11
 no aaa new-model
 system mtu routing 1500
+ip routing
 ip domain-name homelab.local
 !
+ip dhcp excluded-address 192.168.10.1 192.168.10.10
+!
+ip dhcp pool VLAN10-POOL
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool VLAN20-POOL
+ network 192.168.20.0 255.255.255.0
+ default-router 192.168.20.1
+ dns-server 8.8.8.8
 !
 !
 !
+!
+key chain OSPF_KEYS
+ key 1
+  key-string S3cureOSPF!
 !
 crypto pki trustpoint TP-self-signed-2046721536
  enrollment selfsigned
@@ -57,6 +77,10 @@ ip ssh version 2
 !
 !
 !
+!
+interface Loopback0
+ description OSPF Router-ID
+ no ip address
 !
 interface FastEthernet0/1
  description Downlink to SW2 Fa0/1
@@ -164,23 +188,47 @@ interface FastEthernet0/24
  shutdown
 !
 interface GigabitEthernet0/1
- description Not in Use
- shutdown
+ description Fiber Downlink to SW2 Gi0/1
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10
+ switchport mode trunk
 !
 interface GigabitEthernet0/2
- description Not in Use
- shutdown
+ description Fiber Downlink to SW3 Gi0/1
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 20
+ switchport mode trunk
 !
 interface Vlan1
+ description Not in Use
  no ip address
  shutdown
+!
+interface Vlan10
+ description Sales (SVI to Ubuntu VM)
+ ip address 192.168.10.1 255.255.255.0
+!
+interface Vlan20
+ description HR (SVI to Win10 VM)
+ ip address 192.168.20.1 255.255.255.0
 !
 interface Vlan99
  description Management for connected ports (Fa0/3-Fa0/4)
  ip address 192.168.1.1 255.255.255.0
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 S3cureOSPF!
 !
-ip http server
-ip http secure-server
+router ospf 1
+ router-id 192.168.1.1
+ area 0 authentication message-digest
+ passive-interface Vlan10
+ passive-interface Vlan20
+ network 192.168.1.0 0.0.0.255 area 0
+ network 192.168.10.0 0.0.0.255 area 0
+ network 192.168.20.0 0.0.0.255 area 0
+!
+no ip http server
+no ip http secure-server
 !
 !
 !

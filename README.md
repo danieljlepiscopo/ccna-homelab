@@ -34,7 +34,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 | SW1    | VLAN 99   | 192.168.1.1/24  |
 | SW2    | VLAN 99   | 192.168.1.21/24 |
 | SW3    | VLAN 99   | 192.168.1.22/24 |
-| R1     | Gi0/1     | 192.168.1.2/24  |
+| R1     | Gi0/1     | 192.168.1.2/30  |
 | R1     | Gi0/0     | 192.168.3.1/30  |
 | R1     | Lo0       | 192.168.2.1/32  |
 | R2     | Gi0/1     | 192.168.3.2/30  |

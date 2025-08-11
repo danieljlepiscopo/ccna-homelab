@@ -11,21 +11,21 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 ![CCNA Homelab Topology](topology/logical-diagram.png)
 
 ## Goals
-1. Cable and Power On Devices Correctly      | ✅ Completed
-2. Set Hostnames and Interface Descriptions  | ✅ Completed
-3. Configure Device IPs and Default Gateways | ✅ Completed
-4. Enable SSH and Remote Access              | ✅ Completed
-5. Configure VLANs and Trunking              | ✅ Completed
-6. Implement STP/RSTP                        | ✅ Completed
-7. Configure Static Routing                  | ✅ Completed
-8. Implement Inter-VLAN Routing              | ✅ Completed
-9. Configure DHCP and DNS                    | 🔲 Not Started
-10. Set Up Basic ACLs and Port Security      | 🔲 Not Started
-11. Dynamic Routing (RIP, EIGRP, and OSPF)   | 🔲 Not Started
-12. Configure and Verify IPv6 Routing        | 🔲 Not Started
-13. Basic NAT/NAT Overload (PAT) Simulation  | 🔲 Not Started
-14. CDP/LLDP Verification                    | 🔲 Not Started
-15. Gateway Redundancy with HSRP             | 🔲 Not Started
+1. Cable and Power On Devices               | ✅ Completed
+2. Set Hostnames and Interface Descriptions | ✅ Completed
+3. Device IPs and Default Gateways          | ✅ Completed
+4. Enable SSH and Remote Access             | ✅ Completed
+5. VLANs and Trunking                       | ✅ Completed
+6. Implement STP/RSTP                       | ✅ Completed
+7. Static Routing                           | ✅ Completed
+8. Inter-VLAN Routing                       | ✅ Completed
+9. DHCP and DNS                             | 🔲 Not Started
+10. Dynamic Routing (RIP, EIGRP, and OSPF)  | 🔲 Not Started
+11. IPv6 Routing                            | 🔲 Not Started
+12. Basic ACLs and Port Security            | 🔲 Not Started
+13. CDP/LLDP Verification                   | 🔲 Not Started
+14. NAT/NAT Overload (PAT) Simulation       | 🔲 Not Started
+15. Gateway Redundancy with HSRP            | 🔲 Not Started
 
 ## Key Subnets
 | Device | Interface | IP Address      |
@@ -80,11 +80,11 @@ ccna-homelab/
 │       ├── SW1-running-config.txt
 │       ├── SW2-running-config.txt
 │       └── SW3-running-config.txt
-├── labs/
-│   ├── lab1_cabling_setup.md
-│   └── lab8_inter-vlan_routing.md
-└── notes/
-    └── 01-cabling-device.md
+└──labs/
+    ├── lab1_cabling_setup.md
+    ├── lab8_inter-vlan_routing.md
+    ├── lab9_dhcp_and_dns.md
+    └── lab10_dynamic_routing.md
  ```
 
 ## Skills Demonstrated

@@ -1,0 +1,1443 @@
+# Dynamic Routing (RIP, EIGRP, and OSPF)
+
+For this lab, we will get started on dynamic routing protocols, specifically, IGP (Interior Gateway Protocols): RIP, EIGRP, and OSPF. If I have time before my CCNA exam, we’ll try to configure other IGP-related and EGP (Exterior Gateway Protocols), like BGP (Border Gateway Protocol). This lab will be broken up into three different parts, all of which will walk through these three dynamic routing protocols. I will configure them all in my lab, but I will break down RIP and EIGRP once I’ve completed their configuration/testing. OSPF will be the last dynamic protocol I’ll put on my homelab and keep it on there for the rest of the home labs. 
+
+Let’s get started!
+
+## RIPv2
+
+RIP (Routing Information Protocol) is a dynamic routing protocol that isn’t used very widely anymore. RIPv1 doesn’t support VLSM (Variable Length Subnet Masking), which is incredibly important when creating subnets of different sizes. So, I will be configuring RIPv2, which does allow for VLSM. 
+
+Here are the steps I will go through for RIPv2’s configuration:
+
+1. **Assign IPs to Each Router Interface**
+2. **Configure RIPv2**
+3. **Verify RIP is Operational**
+4. **RIP Authentication**
+5. **Remove RIPv2**
+6. **Wrap-Up**
+
+### **Assign IPs to Each Router Interface**
+
+First, I’ve already configured static routes on my routers, so they currently have interface IP assignments to them. I initially set out to have my Loopbacks using a `/24` prefix-length to represent a LAN on the router (having more IP space), but I’m going to switch this to a `/32` . Using a `/32` the prefix length for the loopbacks ensures that the routers have a unique and stable identifier that won’t be affected by interface changes. Especially since protocols like EIGRP/OSPF use router IDs, which will play nicer with a `/32` .
+
+Here are the updated `/32` loopback configurations:
+
+**R1:**
+
+```bash
+conf t
+!
+int lo0
+no ip address 192.168.2.1 255.255.255.0
+ip address 192.168.2.1 255.255.255.255
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+int lo0
+no ip address 192.168.4.1 255.255.255.0
+ip address 192.168.4.1 255.255.255.255
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+int lo0
+no ip address 192.168.6.1 255.255.255.0
+ip address 192.168.6.1 255.255.255.255
+!
+end
+wr
+```
+
+Here is how my Loopbacks look now:
+
+| # | Device | Interface | IP Address | Subnet Mask | Description |
+| --- | --- | --- | --- | --- | --- |
+| 1 | R1 | Loopback0 | 192.168.2.1 | 255.255.255.255 (/32) | R1’s Internal LAN |
+| 2 | R2 | Loopback0 | 192.168.4.1 | 255.255.255.255 (/32) | R2’s Internal LAN |
+| 3 | R3 | Loopback0 | 192.168.6.1 | 255.255.255.255 (/32) | R3’s Internal LAN |
+
+ASCII diagram of the updated network topology:
+
+```python
+         VLAN99 192.168.1.0/24
+     +--------------------------------+
+     |                                |
+ 192.168.1.1                     192.168.1.2
+  +-------+                       +-------+
+  | SW1   |-----------------------|  R1   |
+  +-------+  Fa0/4         Gi0/1   +-------+
+   (VLAN99)                        Lo0: 192.168.2.1/32
+                                   Gi0/0: 192.168.3.1/30
+                                         |
+                                         |
+                              Gi0/1: 192.168.3.2/30
+                                   +-------+
+                                   |  R2   |
+                                   +-------+
+                                   Lo0: 192.168.4.1/32
+                                   Gi0/0: 192.168.5.1/30
+                                         |
+                                         |
+                              Gi0/1: 192.168.5.2/30
+                                   +-------+
+                                   |  R3   |
+                                   +-------+
+                                   Lo0: 192.168.6.1/32
+```
+
+Now that the loopbacks have been updated, let’s configure RIPv2 on each of the routers!
+
+### **Configure RIPv2**
+
+One important thing about RIP is that if we have static routes on our routers, for instance, when we configured static routes back in lab #7, these will mask RIP from actually routing dynamically. The reason for this is that static routes take precedence in the routing table (AD 1), so RIP-learned routes (AD 120) will be ignored until they’re removed. We’ll need to redo them anyway with the new `/32` loopbacks, so be sure to delete them after we configure RIP:
+
+**R1:**
+
+```bash
+conf t
+!
+router rip
+ version 2
+ no auto-summary
+ network 192.168.1.0
+ network 192.168.2.1
+ network 192.168.3.0
+ passive-interface loopback0
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+router rip
+ version 2
+ no auto-summary
+ network 192.168.3.0
+ network 192.168.4.1
+ network 192.168.5.0
+ passive-interface loopback0
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+router rip
+ version 2
+ no auto-summary
+ network 192.168.5.0
+ network 192.168.6.1
+ passive-interface loopback0
+exit
+!
+end
+wr
+```
+
+Let’s break down these commands:
+
+- `router rip`: Enables RIP on the router.
+- `version 2`: Specifies the version we want to use, in this case, version 2.
+- `no auto-summary`: Prevents RIPv2 from summarizing routes to their classful boundaries.
+- `network`: Defines which networks we want to advertise to, using the classful parameter.
+- `passive-interface loopback0`: Stops RIP hellos out of the loopback, but it’ll **still advertise** it.
+
+**Static Route Removal**
+
+After the RIPV2 configuration is set, you’re all good to proceed with removing the static routes to the other routers:
+
+**R1:**
+
+```bash
+conf t
+!
+no ip route 192.168.4.0 255.255.255.0 192.168.3.2
+no ip route 192.168.5.0 255.255.255.252 192.168.3.2
+no ip route 192.168.6.0 255.255.255.0 192.168.3.2
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+no ip route 192.168.1.0 255.255.255.0 192.168.3.1
+no ip route 192.168.2.0 255.255.255.0 192.168.3.1
+no ip route 192.168.6.0 255.255.255.0 192.168.5.2
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+no ip route 192.168.1.0 255.255.255.0 192.168.5.1
+no ip route 192.168.2.0 255.255.255.0 192.168.5.1
+no ip route 192.168.3.0 255.255.255.252 192.168.5.1
+no ip route 192.168.4.0 255.255.255.0 192.168.5.1
+!
+end
+wr
+```
+
+- If you run into any issues, double-check the `network` commands in your routers are related to your router interface/loopback IPs correctly
+
+After that, we’ll need to verify that RIP is working correctly and that routes are being exchanged between the routers.
+
+### **Verify RIP is Operational**
+
+To check and see if RIPv2 is working correctly, run these commands to confirm that all the routers are learning routes dynamically with RIP:
+
+```bash
+show ip interface brief
+show ip protocols
+show ip route
+show ip rip database
+```
+
+- As long as you’re seeing routes being exchanged, you should be more than good!
+
+Another form of checks we can do are pings, SSH, and traceroute (tracert on Windows) on our client host:
+
+```bash
+ping 192.168.2.1
+ping 192.168.4.1
+ping 192.168.6.1
+
+ssh 192.168.2.1
+ssh 192.168.4.1
+ssh 192.168.6.1
+
+tracert 192.168.6.1
+```
+
+- This is mostly to confirm we have connectivity on all devices, we’re able to log in, as well as check and see the next-hops between all of the routers to “see” their path.
+
+<center>
+  <img width="400" height="500" alt="Fiber connections on switches" class="center" src="https://github.com/user-attachments/assets/27fc044c-d442-443a-ab0d-eaa1d4888b37" />
+</center>
+
+That’s awesome! RIPv2 is now dynamically learning and exchanging routes without manually configuring static routes on each router. Verifying that it’s working correctly is 100% needed, so 
+
+### **RIP Authentication**
+
+An important step is to configure an authentication process on the router links. Although RIP isn’t used in modern productions anymore, having an understanding of this configuration applies to all other dynamic routing protocols: EIGRP, OSPF, IS-IS, etc. Applying authentication will be directly transferable to OSPF’s MD5/cryptographic authentication and EIGRP’s key-chain authentication as well.
+
+Without authentication on the routing links, you could have:
+
+- Someone is injecting bogus routes (route poisoning)
+- Changing metrics or redirecting traffic (man-in-the-middle or black hole routes)
+- Overload the routing table, causing instability on the router
+
+Authentication ensures the router checks the signature before accepting new routes, adding security to the routing process. Currently, we have two RIP links between routers that we need to secure:
+
+- `R1 ⇄ R2 on **192.168.3.0/30** (R1 G0/0 ↔ R2 G0/1)`
+- `R2 ⇄ R3 on **192.168.5.0/30** (R2 G0/0 ↔ R3 G0/1)`
+
+We’ll add a shared key-chain and an MD5 on each side of each link. 
+
+Here are the steps we’ll need to follow for RIP Authentication:
+
+1. **Define the Key-Chain on Routers**
+2. **Apply Authentication on the Interfaces that Carry RIP**
+3. **Verification**
+
+Let’s see how this is all configured:
+
+**Define the Key-Chain on Routers**
+
+**R1,** **R2**. and **R3**:
+
+```bash
+conf t
+!
+key chain RIP_KEYS
+ key 1
+  key-string S3cureRIP!
+exit
+!
+end
+wr
+```
+
+**Apply Authentication on the Interfaces that Carry RIP**
+
+**R1:**
+
+```bash
+conf t
+!
+interface g0/0
+ ip rip authentication key-chain RIP_KEYS
+ ip rip authentication mode md5
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+interface g0/1
+ ip rip authentication key-chain RIP_KEYS
+ ip rip authentication mode md5
+exit
+!
+interface g0/0
+ ip rip authentication key-chain RIP_KEYS
+ ip rip authentication mode md5
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+interface g0/1
+ ip rip authentication key-chain RIP_KEYS
+ ip rip authentication mode md5
+exit
+!
+end
+wr
+```
+
+- Here we’re configuring the transit interfaces to use the `key-chain` and an `MD5` password for authentication
+
+**Verification**
+
+Now, let’s take a look and see if we’re still learning routes with RIP on all of the routers:
+
+```bash
+show ip route | inc ^R|4.1|6.1|5.0
+show ip rip database
+show ip protocols
+show key chain RIP_KEYS
+```
+
+- You shouldn’t see any change. RIP should be working the same as before; we just wanted to make sure nothing changed after configuring the interfaces.
+
+Once we’ve verified that RIP is working and the transit interfaces are authenticated properly, we’re ready to move on to the last step and remove RIP from all the routers!
+
+### **Remove RIPv2**
+
+Now that we understand RIP, configured it, verified it works, and authenticated the interfaces in transit for it, it’s now time to remove the configuration. To do this, we’ll also need to break this up so as not to lose access to any of our routers. Here are the steps to take:
+
+1. **Add Static Routes Back (with Loopback IPs)**
+2. **Remove RIP Authentication**
+3. **Remove the `key-chain`**
+4. **Remove RIP**
+5. **Verify**
+
+**Add Static Routes Back**
+
+To start, let’s add our static routes, but this time, update them with the `/32` loopback prefix lengths of each router:
+
+**R1:**
+
+```bash
+conf t
+!
+ip route 192.168.4.1 255.255.255.255 192.168.3.2   ! R2 Lo0 via R2
+ip route 192.168.6.1 255.255.255.255 192.168.3.2   ! R3 Lo0 via R2
+ip route 192.168.5.0 255.255.255.252 192.168.3.2   ! R2-R3 P2P net
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+ip route 192.168.1.0 255.255.255.0 192.168.3.1     ! PC / SW1 LAN via R1
+ip route 192.168.2.1 255.255.255.255 192.168.3.1   ! R1 Lo0 via R1
+ip route 192.168.6.1 255.255.255.255 192.168.5.2   ! R3 Lo0 via R3
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+ip route 192.168.1.0 255.255.255.0 192.168.5.1     ! PC / SW1 LAN via R2
+ip route 192.168.2.1 255.255.255.255 192.168.5.1   ! R1 Lo0 via R2
+ip route 192.168.3.0 255.255.255.252 192.168.5.1   ! R1-R2 P2P net
+ip route 192.168.4.1 255.255.255.255 192.168.5.1   ! R2 Lo0 via R2
+!
+end
+wr
+```
+
+- After configuration, check to make sure you’re able to ping each of the router’s loopbacks from an end host (My PC in this case)
+
+**Remove RIP Authentication**
+
+After adding our routes back, let’s now remove the RIP authentication on the transit interfaces we configured:
+
+**R1:**
+
+```bash
+conf t
+!
+interface g0/0
+ no ip rip authentication key-chain
+ no ip rip authentication mode md5
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+interface g0/1
+ no ip rip authentication key-chain
+ no ip rip authentication mode md5
+exit
+!
+interface g0/0
+ no ip rip authentication key-chain
+ no ip rip authentication mode md5
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+interface g0/1
+ no ip rip authentication key-chain
+ no ip rip authentication mode md5
+exit
+!
+end
+wr
+```
+
+**Remove the `key-chain`**
+
+Since we’re most likely going to re-name the key-chain for each IGP routing protocol, you can delete it with me or just call it a different name:
+
+```bash
+conf t
+!
+no key chain RIP_KEYS
+!
+end
+wr
+```
+
+**Remove RIP**
+
+**R1**, **R2**, and **R3**:
+
+```bash
+conf t
+!
+no router rip
+!
+end
+wr
+```
+
+**Final Verification**
+
+```bash
+show ip protocols
+show ip route
+show ip rip database
+show key chain
+```
+
+- Make sure none of these show commands come back with any configuration set.
+- Check interfaces are back to normal as well.
+
+Verify that you can ping, SSH, and traceroute; you should be all set!
+
+### Wrap-Up
+
+RIPv1 and RIPv2 have fallen out of favor for more robust IGP dynamic routing that can offer considerably more versatility. Although RIPv2 had made improvements compared to RIPv1, such as: 
+
+- Classless subnets (supporting VLSM & CIDR)
+- Supporting router authentication (plain-text and MD5)
+- Supports multicast updates (224.0.0.9) instead of broadcast
+- Ability to carry more route tags (used for redistribution)
+
+RIPv2 still lacks because of its 15-hop limit, slow convergence, poor scalability, and lack of any advanced features in large/modern networks. Although it’s not used in modern day, it’s still worth learning about and configuring for the CCNA, and to understand concepts like distance-vector routing and see the exchanges between routes.
+
+Next, we will move on to EIGRP, a more modern dynamic routing protocol that Cisco created.
+
+## EIGRP
+
+Up next, we have EIGRP (Enhanced Interior Gateway Routing Protocol), a dynamic routing protocol that was developed by Cisco. This protocol is an advanced distance-vector protocol, combining the benefits of both distance-vector and link-state protocols into one. It’s used in large networks and includes key features like fast convergence and sends out incremental updates for any changed routes.
+
+Here are the steps I will go through for EIGRP’s configuration:
+
+1. **Configure EIGRP**
+2. **Verification**
+3. **Passive Interfaces**
+4. **EIGRP Authentication**
+5. **Remove EIGRP**
+6. **Wrap-Up**
+
+### **Configure EIGRP**
+
+To get started, we’ll follow a similar process as we did with RIPv2, where we end up configuring the routers for EIGRP and then removing the static routes afterwards to make sure the routers are learning the routes dynamically. However, we will also be configuring our core/distribution L3 switch for this part of the lab as well! To make the home lab run as close as we can to an enterprise network, we will enable EIGRP on this device as well.
+
+**Basic EIGRP Configuration**
+
+**R1:**
+
+```bash
+conf t
+!
+router eigrp 100
+ network 192.168.1.0 0.0.0.255
+ network 192.168.2.1 0.0.0.0
+ network 192.168.3.0 0.0.0.3
+ no auto-summary
+ passive-interface Loopback0
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+router eigrp 100
+ network 192.168.3.0 0.0.0.3
+ network 192.168.4.1 0.0.0.0
+ network 192.168.5.0 0.0.0.3
+ no auto-summary
+ passive-interface Loopback0
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+router eigrp 100
+ network 192.168.5.0 0.0.0.3
+ network 192.168.6.1 0.0.0.0
+ no auto-summary
+ passive-interface Loopback0
+exit
+!
+end
+wr
+```
+
+**SW1:**
+
+```bash
+conf t
+!
+router eigrp 100
+ network 192.168.1.0 0.0.0.255
+ network 192.168.10.0 0.0.0.255   ! VLAN 10 subnet if you have it
+ network 192.168.20.0 0.0.0.255   ! VLAN 20 subnet if you have it
+ no auto-summary
+ passive-interface vlan10
+ passive-interface vlan20
+ no passive-interface g0/1
+exit
+!
+end
+wr
+```
+
+Let’s break down these commands:
+
+- `router eigrp [AS#]`:  Enables EIGRP with an autonomous system (100 in this case).
+- `network [ip] [wildcard-mask]`: Tells EIGRP which interfaces to enable.
+    - We use /32 masks on Loopbacks, which in wildcard form is “0.0.0.0”.
+- `no auto-summary`: Disabled classful summarization (similar to RIPv2).
+- `passive-interface Loopback0/vlan#`: Prevents Hello messages from being sent out the loopback interface or VLAN.
+- `no passive-interface [interface#]`Hello packets are not sent on an interface that is specified as passive.
+
+**Remove Static Routes**
+
+**R1:**
+
+```bash
+
+conf t
+!
+no ip route 192.168.1.0 255.255.255.0 192.168.1.1
+no ip route 192.168.4.1 255.255.255.255 192.168.3.2
+no ip route 192.168.5.0 255.255.255.252 192.168.3.2
+no ip route 192.168.6.1 255.255.255.255 192.168.3.2
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+no ip route 192.168.1.0 255.255.255.0 192.168.3.1
+no ip route 192.168.2.1 255.255.255.255 192.168.3.1
+no ip route 192.168.6.1 255.255.255.255 192.168.5.2
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+no ip route 192.168.1.0 255.255.255.0 192.168.5.1
+no ip route 192.168.2.1 255.255.255.255 192.168.5.1
+no ip route 192.168.3.0 255.255.255.252 192.168.5.1
+no ip route 192.168.4.1 255.255.255.255 192.168.5.1
+!
+end
+wr
+```
+
+After the configuration is set and static routes have been removed, we now need to check and verify that EIGRP is working properly.
+
+### **Verification**
+
+Run these commands on all devices involved to confirm adjacency and route learning is happening.
+
+**SW1**, **R1**, **R2**, and **R3**:
+
+```bash
+show ip eigrp neighbors
+show ip route eigrp
+show ip protocols
+```
+
+- You should see your neighbors listed, and EIGRP-learned routes in the table.
+- Make sure you see each other as neighbors, and routes are present between VLANs (on SW1) on R1, and routes R2/R3 are present on SW1 as well.
+
+Also, verifying  pings, SSH, and traceroute (tracert on Windows) on our client host:
+
+```bash
+ping 192.168.1.1
+ping 192.168.2.1
+ping 192.168.4.1
+ping 192.168.6.1
+
+ssh 192.168.1.1
+ssh 192.168.2.1
+ssh 192.168.4.1
+ssh 192.168.6.1
+
+tracert 192.168.6.1
+```
+
+- This is mostly to confirm we have connectivity on all devices, we’re able to log in, as well as check and see the next-hops between all of the routers to “see” their path.
+
+After all verifications have passed, it’s time to move on to configuring our passive interfaces.
+
+### **Passive Interfaces**
+
+For EIGRP, passive interfaces are configured to prevent routers from sending or receiving EIGRP routing updates on specific interfaces, which helps conserve resources and maintain network stability. 
+
+- **Passive**: Used on user-facing VLANs or loopbacks to help prevent sending hellos where neighbors aren’t expected.
+- **Active**: Only on P2P or transit VLANs between routers/switches.
+
+In our case, locking down our transit links from forming adjacencies will make EIGRP more efficient. 
+
+**Passive Interfaces Configuration**
+
+**R1:**
+
+```bash
+conf t
+!
+router eigrp 100
+ passive-interface default
+ no passive-interface g0/0      ! to R2
+ no passive-interface g0/1      ! to SW1 (Vlan99)
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+router eigrp 100
+ passive-interface default
+ no passive-interface g0/1      ! to R1
+ no passive-interface g0/0      ! to R3
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+router eigrp 100
+ passive-interface default
+ no passive-interface g0/1      ! to R2
+exit
+!
+end
+wr
+```
+
+**SW1:**
+
+```bash
+conf t
+!
+router eigrp 100
+ passive-interface default
+ no passive-interface vlan99
+exit
+!
+end
+wr
+```
+
+**Verify EIGRP**
+
+```bash
+show ip eigrp neighbors
+show ip protocols
+```
+
+- After configuration, you should see neighbors only on:
+    - **R1<->SW1 (Vlan99)**
+    - **R1<->R2 (G0/0–G0/1)**
+    - **R2<->R3 (G0/0–G0/1)**
+
+Since our passive interfaces have been configured correctly, it’s time to move on to configuring authentication for EIGRP.
+
+### **EIGRP Authentication**
+
+Similar to how we created a shared key-chain, added it to the interfaces, and then added an MD5 password to each interface on RIPv2, we’ll do the same thing for EIGRP as well.  Expect a brief adjacency flap when you turn this on, which is totally normal.
+
+**Create the Key-Chain**
+
+**R1**, **R2**, **R3**, and **SW1**:
+
+```bash
+conf t
+!
+key chain EIGRP_KEYS
+ key 1
+  key-string S3cureEIGRP!
+exit
+!
+end
+wr
+```
+
+**Apply to Each Transit Interface**
+
+**R1:**
+
+```bash
+conf t
+!
+interface g0/0
+ ip authentication mode eigrp 100 md5
+ ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+interface g0/1
+ ip authentication mode eigrp 100 md5
+ ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+interface g0/1
+ ip authentication mode eigrp 100 md5
+ ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+interface g0/0
+ ip authentication mode eigrp 100 md5
+ ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+interface g0/1
+ ip authentication mode eigrp 100 md5
+ ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+end
+wr
+```
+
+**SW1:**
+
+```bash
+conf t
+!
+interface vlan99
+ ip authentication mode eigrp 100 md5
+ ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+end
+wr
+```
+
+**Verify neighbors’ Return**
+
+```bash
+show ip eigrp neighbors
+show ip protocols
+show running-config | section EIGRP_KEYS
+```
+
+If a neighbor stays down, the most common causes:
+
+- Key‑string mismatch, wrong key ID, or forgot to apply both `mode` and `key-chain` on both ends.
+- Applied to the wrong interface.
+
+After verifications come back clean, and you’re able to SSH back into the devices, we’re all good to move on to removing EIGRP from all of the devices.
+
+### **Remove EIGRP**
+
+To tear down EIGRP, we’ll follow the same process as we did with RIPv2: Add static routes back, remove interface authorization, remove the key-chain, delete EIGRP, and verify the static routes/reachability. 
+
+**Add Static Routes Back**
+
+**R1:**
+
+```bash
+
+conf t
+!
+ip route 192.168.1.0 255.255.255.0 192.168.1.1
+ip route 192.168.4.1 255.255.255.255 192.168.3.2
+ip route 192.168.5.0 255.255.255.252 192.168.3.2
+ip route 192.168.6.1 255.255.255.255 192.168.3.2
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+ip route 192.168.1.0 255.255.255.0 192.168.3.1
+ip route 192.168.2.1 255.255.255.255 192.168.3.1
+ip route 192.168.6.1 255.255.255.255 192.168.5.2
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+ip route 192.168.1.0 255.255.255.0 192.168.5.1
+ip route 192.168.2.1 255.255.255.255 192.168.5.1
+ip route 192.168.3.0 255.255.255.252 192.168.5.1
+ip route 192.168.4.1 255.255.255.255 192.168.5.1
+!
+end
+wr
+```
+
+**Remove Interface Authorization**
+
+**R1:**
+
+```bash
+conf t
+!
+interface g0/0
+ no ip authentication mode eigrp 100 md5
+ no ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+interface g0/1
+ no ip authentication mode eigrp 100 md5
+ no ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+interface g0/1
+ no ip authentication mode eigrp 100 md5
+ no ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+interface g0/0
+ no ip authentication mode eigrp 100 md5
+ no ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+interface g0/1
+ no ip authentication mode eigrp 100 md5
+ no ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+end
+wr
+```
+
+**SW1:**
+
+```bash
+conf t
+!
+interface vlan99
+ no ip authentication mode eigrp 100 md5
+ no ip authentication key-chain eigrp 100 EIGRP_KEYS
+exit
+!
+end
+wr
+```
+
+**Remove the Key-Chain**
+
+**R1**, **R2**, **R3**, and **SW1**:
+
+```bash
+conf t
+!
+no key chain EIGRP_KEYS
+!
+end
+wr
+```
+
+**Remove EIGRP**
+
+**R1**, **R2**, **R3**, and **SW1**:
+
+```bash
+conf t
+!
+no router eigrp 100
+!
+end
+wr
+```
+
+Final Verification
+
+```bash
+show ip eigrp neighbors
+show ip route eigrp
+show ip protocols
+show key chain
+```
+
+- Make sure none of these show commands come back with any configuration set.
+- Check interfaces are back to normal as well.
+
+Verify that you can ping, SSH, and traceroute; you should be all set!
+
+### **Wrap-Up**
+
+EIGRP is another important IGP dynamic routing protocol that offers a lot more flexibility than RIPv1/v2. Although EIGRP has been a Cisco proprietary protocol, Cisco published it in the informational RFC in 2013, allowing other vendors to implement EIGRP while Cisco retains the rights for it. EIGRP does have some pros and cons, such as:
+
+**Pros**
+
+- **Fast Convergence**: Using the Diffusing Update Algorithm (DUAL) allows for rapid convergence when network changes happen.
+- **Low Resource Usage**: Requires less CPU usage and memory, making it more efficient.
+- **Easy Configuration**: Generally a much easier to configure/manage, especially in a Cisco-heavy environment.
+- **Unequal Load Balancing**: Supports unequal-cost load balancing, allowing for more flexible routing options.
+
+**Cons**
+
+- **Proprietary Nature**: Although Cisco published EIGRP, it doesn’t mean other vendors will use it, and it’s a hindrance in multi-vendor environments.
+- **Limited Scalability**: Effective in small to medium networks, it doesn’t scale very well.
+
+Up next is another heavy-hitter for IGP dynamic routing protocols, and is by far the most widely used in modern networks today: OSPF.
+
+## OSPF
+
+Lastly, OSPF (Open Shortest Path First) is a link-state protocol that’s used for dynamically routing IP packets within a single autonomous system (AS). Using the Shortest Path First (SPF) algorithm, specifically Dijkstra’s algorithm, it’s able to determine the most efficient path for data transmission. Using link-state advertisements (LSAs), where routers share information about their links and network topology, each router maintains its link-state database (LSDB) to reflect the network’s state. 
+
+There is a lot that comes with OSPF, but let’s follow our steps to configure and keep this configuration for future use on my home lab:
+
+1. **Configure OSPFv2**
+2. **Verification**
+3. **Passive Interfaces**
+4. **OSPFv2 Authentication**
+5. **Wrap Up**
+
+### **Configure OSPFv2**
+
+Similar to how to configured EIGRP, we will be doing the same thing when configuring OSPF, mimicking the configuration on my core/distribution L3 switch and the routers that follow to get the home lab as close as we can to an enterprise network. The only major difference is that we will be putting all of the devices in Area 0, using a single backbone area for simplicity's sake.
+
+**Basic OSPF Configuration**
+
+**R1:**
+
+```bash
+conf t
+!
+router ospf 1
+ router-id 192.168.2.1
+ network 192.168.1.0 0.0.0.255 area 0
+ network 192.168.2.1 0.0.0.0 area 0
+ network 192.168.3.0 0.0.0.3 area 0
+ passive-interface Loopback0
+ auto-cost reference-bandwidth 1000
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+router ospf 1
+ router-id 192.168.4.1
+ network 192.168.3.0 0.0.0.3 area 0
+ network 192.168.4.1 0.0.0.0 area 0
+ network 192.168.5.0 0.0.0.3 area 0
+ passive-interface Loopback0
+ auto-cost reference-bandwidth 1000
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+router ospf 1
+ router-id 192.168.6.1
+ network 192.168.5.0 0.0.0.3 area 0
+ network 192.168.6.1 0.0.0.0 area 0
+ passive-interface Loopback0
+ auto-cost reference-bandwidth 1000
+exit
+!
+end
+wr
+```
+
+**SW1:**
+
+```bash
+conf t
+!
+router ospf 1
+ router-id 192.168.1.1
+ network 192.168.1.0 0.0.0.255 area 0
+ network 192.168.10.0 0.0.0.255 area 0
+ network 192.168.20.0 0.0.0.255 area 0
+ passive-interface vlan10
+ passive-interface vlan20
+ auto-cost reference-bandwidth 1000
+exit
+!
+end
+wr
+```
+
+Let’s break down these commands:
+
+- `router ospf [process-id]`:  Enables OSPF with an autonomous system (1 in this case).
+- `router-id`: The router ID is a unique identifier for the OSPF router in the network.
+- `network [ip] [wildcard-mask] area [area#]`  : Tells OSPF which interfaces to enable.
+    - We use /32 masks on Loopbacks, which in wildcard form is “0.0.0.0”.
+- `passive-interface Loopback0/vlan#`: Prevents Hello messages from being sent out the loopback interface or VLAN.
+- `no auto-cost reference-bandwidth 1000` ensures correct cost calculation for Gbps interfaces.
+
+**Remove Static Routes**
+
+**R1:**
+
+```bash
+
+conf t
+!
+no ip route 192.168.1.0 255.255.255.0 192.168.1.1
+no ip route 192.168.4.1 255.255.255.255 192.168.3.2
+no ip route 192.168.5.0 255.255.255.252 192.168.3.2
+no ip route 192.168.6.1 255.255.255.255 192.168.3.2
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+no ip route 192.168.1.0 255.255.255.0 192.168.3.1
+no ip route 192.168.2.1 255.255.255.255 192.168.3.1
+no ip route 192.168.6.1 255.255.255.255 192.168.5.2
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+no ip route 192.168.1.0 255.255.255.0 192.168.5.1
+no ip route 192.168.2.1 255.255.255.255 192.168.5.1
+no ip route 192.168.3.0 255.255.255.252 192.168.5.1
+no ip route 192.168.4.1 255.255.255.255 192.168.5.1
+!
+end
+wr
+```
+
+After the configuration is set and static routes have been removed, we now need to check and verify that OSPF is working properly.
+
+### **Verification**
+
+Run these commands on all devices involved to confirm adjacency and route learning is happening.
+
+**SW1**, **R1**, **R2**, and **R3**:
+
+```python
+show ip ospf neighbor
+show ip route ospf
+show ip ospf interface brief
+ping 192.168.6.1 source lo0
+```
+
+- **Neighbors:** FULL state with expected devices.
+- **Routes:** All subnets in the table.
+- **Pings:** All loopbacks reachable.
+
+Also, verifying  pings, SSH, and traceroute (tracert on Windows) on our client host:
+
+```bash
+ping 192.168.1.1
+ping 192.168.2.1
+ping 192.168.4.1
+ping 192.168.6.1
+
+ssh 192.168.1.1
+ssh 192.168.2.1
+ssh 192.168.4.1
+ssh 192.168.6.1
+
+tracert 192.168.6.1
+```
+
+- This is mostly to confirm we have connectivity on all devices, we’re able to log in, as well as check and see the next-hops between all of the routers to “see” their path.
+
+After all verifications have passed, it’s time to move on to configuring our passive interfaces.
+
+### **Passive Interfaces**
+
+Configuring passive interfaces for OSPF stops hellos from being sent to networks where no neighbors exist (saves CPU, reduces attack surface).
+
+**Passive Interfaces Configuration**
+
+**R1:**
+
+```bash
+conf t
+!
+router ospf 1
+ passive-interface default
+ no passive-interface g0/0      ! to R2
+ no passive-interface g0/1      ! to SW1 (Vlan99)
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+router ospf 1
+ passive-interface default
+ no passive-interface g0/1      ! to R1
+ no passive-interface g0/0      ! to R3
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+router ospf 1
+ passive-interface default
+ no passive-interface g0/1      ! to R2
+exit
+!
+end
+wr
+```
+
+**SW1:**
+
+```bash
+conf t
+!
+router ospf 1
+ passive-interface default
+ no passive-interface vlan99
+exit
+!
+end
+wr
+```
+
+**Verify OSPF**
+
+```bash
+show ip ospf neighbor
+show ip protocols
+```
+
+Since our passive interfaces have been configured correctly, it’s time to move on to configuring authentication for OSPF.
+
+### **OSPFv2 Authentication**
+
+Similar to how we created a shared key-chain, added it to the interfaces, and then added an MD5 password to each interface on EIGRP, we’ll do the same thing for OSPF as well.  Expect a brief adjacency flap when you turn this on, which is totally normal.
+
+**Create the Key-Chain**
+
+**R1**, **R2**, **R3**, and **SW1**:
+
+```bash
+conf t
+!
+key chain OSPF_KEYS
+ key 1
+  key-string S3cureOSPF!
+exit
+!
+end
+wr
+```
+
+**Apply to Each Transit Interface**
+
+**R1:**
+
+```bash
+conf t
+!
+interface g0/0
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 S3cureOSPF!
+exit
+!
+interface g0/1
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 S3cureOSPF!
+exit
+!
+end
+wr
+```
+
+**R2:**
+
+```bash
+conf t
+!
+interface g0/1
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 S3cureOSPF!
+exit
+!
+interface g0/0
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 S3cureOSPF!
+exit
+!
+end
+wr
+```
+
+**R3:**
+
+```bash
+conf t
+!
+interface g0/1
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 S3cureOSPF!
+exit
+!
+end
+wr
+```
+
+**SW1:**
+
+```bash
+conf t
+!
+interface vlan99
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 S3cureOSPF!
+exit
+!
+end
+wr
+```
+
+**Enable in OSPF Process**
+
+```bash
+conf t
+!
+router ospf 1
+ area 0 authentication message-digest
+exit
+!
+end
+wr
+```
+
+**Verify Neighbors’ Return**
+
+```bash
+show ip ospf neighbor
+show ip protocols
+show running-config | section OSPF_KEYS
+```
+
+After verifications come back clean, and you’re able to SSH back into the devices, we’re all done with configuration, and we’ll start wrapping everything up.
+
+### **Wrap Up**
+
+OSPF is one of the greatest IGP dynamic routing protocols that we use in large enterprise networks today. Although it offers an exceptional ability to scale in a network, its complexity compared to other protocols may be a hindrance. Regardless, its ability to create LSDBs for every LSA it knows is more intelligent than RIP and EIGRP combined.
+
+OSPF does have some pros and cons, such as:
+
+**Pros**
+
+- **Scalability**: Handles large and complex networks.
+- **Fast Convergence**: Quickly adapts to changes in a network topology and updates when a change occurs.
+- **Load Balancing**: Supports equal-cost multipath routing, distributing traffic across multiple paths.
+- **Security**: Offers routing authentication for data integrity
+- **Hierarchical Design**: Uses a structured approach with areas to imply management and enhance performance.
+
+**Cons**
+
+- **Resource Intensive**: Can be heavily CPU-intensive, especially with maintaining multiple copies of routing information.
+- **Complexity**: More challenging to configure and manage compared to RIP/EIGRP and requires a deeper understanding.
+- **Overhead**: Frequent updates can take up network traffic if links are unstable.
+
+Overall, OSPF is an exceptional feat in technology and in computer networking as a whole. Although this is probably one of the most complex concepts for the CCNA, it’s the most helpful concept for a network engineer to know.

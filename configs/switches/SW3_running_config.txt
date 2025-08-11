@@ -1,4 +1,6 @@
-Current configuration : 3108 bytes
+Building configuration...
+
+Current configuration : 3214 bytes
 !
 version 15.0
 no service pad
@@ -64,8 +66,11 @@ interface FastEthernet0/2
  spanning-tree guard loop
 !
 interface FastEthernet0/3
- description Not in Use
- shutdown
+ description Win10 VM (VLAN 20 - HR)
+ switchport access vlan 20
+ switchport mode access
+ spanning-tree portfast
+ spanning-tree bpduguard enable
 !
 interface FastEthernet0/4
  description Not in Use
@@ -76,10 +81,8 @@ interface FastEthernet0/5
  shutdown
 !
 interface FastEthernet0/6
- description EtherChannel to SW2
- switchport trunk native vlan 99
- switchport mode trunk
- channel-group 2 mode active
+ description Not in Use
+ shutdown
 !
 interface FastEthernet0/7
  description Not in Use
@@ -154,14 +157,15 @@ interface FastEthernet0/24
  shutdown
 !
 interface GigabitEthernet0/1
- description Not in Use
- shutdown
+ description Fiber Uplink to SW1 Gi0/2
+ switchport mode trunk
 !
 interface GigabitEthernet0/2
- description Not in Use
- shutdown
+ description Fiber Uplink to SW2 Gi0/2
+ switchport mode trunk
 !
 interface Vlan1
+ description Not in Use
  no ip address
  no ip route-cache
  shutdown

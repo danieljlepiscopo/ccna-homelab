@@ -73,5 +73,5 @@ Eventually, I’ll have to move my cabling around when it comes to routing my ro
 I got everything set up and powered on, and working!
 
 <center>
-  <img width="875" height="280" alt="connected_homelab" class="center" src="https://github.com/user-attachments/assets/1fb748ed-bf60-42a5-a3b0-7711b4a28ed6" />
+  <img width="400" height="500" alt="connected_homelab" class="center" src="https://github.com/user-attachments/assets/1fb748ed-bf60-42a5-a3b0-7711b4a28ed6" />
 </center>

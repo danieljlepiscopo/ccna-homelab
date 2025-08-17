@@ -5,7 +5,7 @@
 Less of a traditional “lab” and more of an actual necessity for me to power on, connect, and be able to configure my Cisco switches and routers.  This beginning step is what is needed for me to configure devices and create a topology to mimic real-world networks.
 
 <center>
-  <img width="400" height="500" alt="three_tier" class="center" src="https://github.com/user-attachments/assets/3cb35778-72e6-4fe5-be0a-ed7a7a70aadf" />
+  <img width="400" height="500" alt="homelab" class="center" src="https://github.com/user-attachments/assets/3cb35778-72e6-4fe5-be0a-ed7a7a70aadf" />
 </center>
 
 To start this, I needed to understand what type of topology I needed; most networks today use a three-tier approach:
@@ -72,4 +72,6 @@ Eventually, I’ll have to move my cabling around when it comes to routing my ro
 
 I got everything set up and powered on, and working!
 
-<picture of my lab with cabling/powered on>
+<center>
+  <img width="875" height="280" alt="connected_homelab" class="center" src="https://github.com/user-attachments/assets/1fb748ed-bf60-42a5-a3b0-7711b4a28ed6" />
+</center>

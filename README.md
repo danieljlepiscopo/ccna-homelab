@@ -4,7 +4,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 ## Devices Used
 - Cisco 1921 Routers (x3)
 - Cisco Catalyst 2960 Switches (x2)
-- Cisco Catalyst 3560 Switches (x1)
+- Cisco Catalyst 3560v2 Switch (x1)
 - Windows 10 PC (Oracle VM with Win10 & Ubuntu VMs)
 
 ## Topology Overview
@@ -21,11 +21,13 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 8. Inter-VLAN Routing                       | ✅ Completed
 9. DHCP and DNS                             | ✅ Completed
 10. Dynamic Routing (RIP, EIGRP, and OSPF)  | ✅ Completed
-11. IPv6 Routing                            | 🔲 Not Started
+11. IPv6 Routing                            | 🚧 In Progress
 12. Basic ACLs and Port Security            | 🔲 Not Started
-13. CDP/LLDP Verification                   | 🔲 Not Started
-14. NAT/NAT Overload (PAT) Simulation       | 🔲 Not Started
-15. Gateway Redundancy with HSRP            | 🔲 Not Started
+13. Wireless AP
+    | 🔲 Not Started    
+15. CDP/LLDP Verification                   | 🔲 Not Started
+16. NAT/NAT Overload (PAT) Simulation       | 🔲 Not Started
+17. Gateway Redundancy with HSRP            | 🔲 Not Started
 
 ## Key Subnets
 | Device | Interface | IP Address      |

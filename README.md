@@ -23,8 +23,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 10. Dynamic Routing (RIP, EIGRP, and OSPF)  | ✅ Completed
 11. IPv6 Routing                            | ✅ Completed
 12. Basic ACLs and Port Security            | 🔲 Not Started
-13. Wireless AP
-    | 🔲 Not Started    
+13. Wireless AP                             | 🔲 Not Started    
 15. CDP/LLDP Verification                   | 🔲 Not Started
 16. NAT/NAT Overload (PAT) Simulation       | 🔲 Not Started
 17. Gateway Redundancy with HSRP            | 🔲 Not Started
@@ -70,7 +69,9 @@ ccna-homelab/
     ├── lab1_cabling_setup.md
     ├── lab8_inter-vlan_routing.md
     ├── lab9_dhcp_and_dns.md
-    └── lab10_dynamic_routing.md
+    ├── lab10_dynamic_routing.md
+    └── lab11_ipv6_routing.md
+
  ```
 
 ## Skills Demonstrated

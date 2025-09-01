@@ -7,26 +7,39 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 - Cisco Catalyst 3560v2 Switch (x1)
 - Windows 10 PC (Oracle VM with Win10 & Ubuntu VMs)
 
-## Topology Overview
-![CCNA Homelab Topology](topology/logical-diagram.png)
+## Diagrams
+### Logical Topology
+![Logical Topology](topology/logical-topology.png)
+
+### Physical Topology
+![Physical Topology](topology/physical-topology.png)
+
+## Current State
+As of September 2025, this homelab has completed 11 out of 16 planned labs.  
+The lab currently demonstrates:
+- End-to-end IPv4 and IPv6 connectivity
+- Dynamic routing across R1–R3 using RIP, EIGRP, and OSPF
+- Functional inter-VLAN routing on SW1 (Layer 3 switch)
+- DHCP services running from SW1
+- Internal DNS resolution via Ubuntu VM (BIND9)
 
 ## Goals
-1. Cable and Power On Devices               | ✅ Completed
-2. Set Hostnames and Interface Descriptions | ✅ Completed
-3. Device IPs and Default Gateways          | ✅ Completed
-4. Enable SSH and Remote Access             | ✅ Completed
-5. VLANs and Trunking                       | ✅ Completed
-6. Implement STP/RSTP                       | ✅ Completed
-7. Static Routing                           | ✅ Completed
-8. Inter-VLAN Routing                       | ✅ Completed
-9. DHCP and DNS                             | ✅ Completed
-10. Dynamic Routing (RIP, EIGRP, and OSPF)  | ✅ Completed
-11. IPv6 Routing                            | ✅ Completed
-12. Basic ACLs and Port Security            | 🔲 Not Started
-13. Wireless AP                             | 🔲 Not Started    
-15. CDP/LLDP Verification                   | 🔲 Not Started
-16. NAT/NAT Overload (PAT) Simulation       | 🔲 Not Started
-17. Gateway Redundancy with HSRP            | 🔲 Not Started
+- [x] 1. Cable and Power On Devices
+- [x] 2. Set Hostnames and Interface Descriptions
+- [x] 3. Device IPs and Default Gateways
+- [x] 4. Enable SSH and Remote Access
+- [x] 5. VLANs and Trunking
+- [x] 6. Implement STP/RSTP
+- [x] 7. Static Routing
+- [x] 8. Inter-VLAN Routing
+- [x] 9. DHCP and DNS
+- [x] 10. Dynamic Routing (RIP, EIGRP, OSPF)
+- [x] 11. IPv6 Routing
+- [ ] 12. Basic ACLs and Port Security
+- [ ] 13. Wireless AP
+- [ ] 14. CDP/LLDP Verification
+- [ ] 15. NAT/NAT Overload (PAT) Simulation
+- [ ] 16. Gateway Redundancy with HSRP
 
 ## Key Subnets
 | Device | Interface | IP Address      |
@@ -79,8 +92,13 @@ ccna-homelab/
 - VLANs and 802.1Q trunking
 - STP and RSTP implementation
 - IP subnetting and static routing
+- OSPF, EIGRP, and RIP dynamic routing
+- IPv6 addressing and OSPFv3
 - SSH and secure remote access setup
-- Layer 2/3 troubleshooting
+- DHCP and DNS server configuration (Ubuntu BIND9)
+- ACLs and Port Security (in progress)
+- NAT/PAT and HSRP (upcoming)
+- Layer 2/3 troubleshooting using `ping`, `traceroute`, `show`, and `debug`
 
 ## License
 - MIT License

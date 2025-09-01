@@ -1,68 +1,94 @@
 Building configuration...
 
-Current configuration : 2093 bytes
+Current configuration : 6405 bytes
 !
-! Last configuration change at 00:42:49 UTC Mon Aug 11 2025 by dan
-!
-version 15.8
+version 15.0
+no service pad
 service timestamps debug datetime msec
 service timestamps log datetime msec
 no service password-encryption
 !
-hostname R1
+hostname SW1
 !
 boot-start-marker
 boot-end-marker
 !
 !
-enable secret 5 $1$VOS2$PeMZoXaErbAWBez2JWgTG.
+enable secret 5 $1$gpFY$E/p2EC4.uoDK4h3B3XRfO.
+enable password 123
 !
+username dan secret 5 $1$gCmc$8YvhDKu8a//2quiCD.vU11
+username admin15 privilege 15 secret 5 $1$.mQ9$Ecyt8oVZauEyXQVYWTVqh1
 no aaa new-model
+system mtu routing 1500
+ip routing
+ip domain-name homelab.local
+!
+no ip dhcp use vrf connected
+ip dhcp excluded-address 192.168.10.1 192.168.10.10
+!
+ip dhcp pool VLAN10-POOL
+ network 192.168.10.0 255.255.255.0
+ default-router 192.168.10.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool VLAN20-POOL
+ network 192.168.20.0 255.255.255.0
+ default-router 192.168.20.1
+ dns-server 8.8.8.8
 !
 !
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-!
-
-
-!
-!
-!
-!
-ip domain name homelab.local
-ip cef
-no ipv6 cef
-!
-multilink bundle-name authenticated
-!
+ipv6 unicast-routing
 !
 !
 key chain OSPF_KEYS
  key 1
   key-string S3cureOSPF!
 !
+crypto pki trustpoint TP-self-signed-3974732928
+ enrollment selfsigned
+ subject-name cn=IOS-Self-Signed-Certificate-3974732928
+ revocation-check none
+ rsakeypair TP-self-signed-3974732928
 !
-license udi pid CISCO1921/K9 sn FJC2051L3TM
-license boot module c1900 technology-package securityk9
-license boot module c1900 technology-package datak9
+!
+crypto pki certificate chain TP-self-signed-3974732928
+ certificate self-signed 01
+  30820249 308201B2 A0030201 02020101 300D0609 2A864886 F70D0101 04050030
+  31312F30 2D060355 04031326 494F532D 53656C66 2D536967 6E65642D 43657274
+  69666963 6174652D 33393734 37333239 3238301E 170D3933 30333031 30303031
+  30365A17 0D323030 31303130 30303030 305A3031 312F302D 06035504 03132649
+  4F532D53 656C662D 5369676E 65642D43 65727469 66696361 74652D33 39373437
+  33323932 3830819F 300D0609 2A864886 F70D0101 01050003 818D0030 81890281
+  8100ADAB FA7773A1 D1F9F641 A727EE10 4057C4AE A131E023 F7D638CC 378C9285
+  20C29E0B D5FE5741 8DDEE636 0FB6FFAA 3515AF44 54DDEE0A DF508E42 50922A5C
+  0CABC911 0E6BCE99 C8364CD2 227744CD 4905F91A D456B564 BDE252C1 3C02258F
+  9D18A4E4 D653007A 12F20208 BF8E5EB1 63631A6C 31F392A5 FD21E2B8 07CBA2D6
+  D87D0203 010001A3 71306F30 0F060355 1D130101 FF040530 030101FF 301C0603
+  551D1104 15301382 11535731 2E686F6D 656C6162 2E6C6F63 616C301F 0603551D
+  23041830 168014C8 F7FE4275 900D0E43 BC24ED76 4C69D32A 2C48AE30 1D060355
+  1D0E0416 0414C8F7 FE427590 0D0E43BC 24ED764C 69D32A2C 48AE300D 06092A86
+  4886F70D 01010405 00038181 0038E2ED B6A74F1E 6234A865 C78504FF 3C19409D
+  4537613A 176EA3C0 C6C2A34F D7609C8F C3122BD7 2F26B620 BC5C383C 12DB360A
+  3CFC20A2 79F276BF 7143AD97 0C69B73F 5FD167BC 35F1D33F 13BC15BE F7A2926E
+  4B1F53E0 EC7429F0 F675417C D0DBD847 FAA9C433 BAE1BA92 DFC7F63A B14CE5C1
+  CD0A79E8 37D523EB 18A651EB EF
+        quit
 !
 !
-username dan secret 5 $1$GpV0$yCq2rg72YdYHsmpLV8gVR0
-username daniel privilege 15 secret 5 $1$JJ9.$E.ArS13FBRrkLD.Yg2JLA/
 !
-redundancy
 !
+!
+!
+spanning-tree mode rapid-pvst
+spanning-tree extend system-id
+spanning-tree vlan 99 priority 24576
+!
+vlan internal allocation policy ascending
+!
+ip tftp source-interface FastEthernet0/3
+ip ssh version 2
+ip scp server enable
 !
 !
 !
@@ -78,67 +104,186 @@ redundancy
 !
 !
 interface Loopback0
- description Internal LAN
- ip address 192.168.2.1 255.255.255.255
+ description OSPF Router-ID
+ no ip address
 !
-interface Embedded-Service-Engine0/0
+interface FastEthernet0/1
+ description Downlink to SW2 Fa0/1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 10,99
+ switchport mode trunk
+ spanning-tree guard root
+!
+interface FastEthernet0/2
+ description Downlink to SW3 Fa0/1
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 20,99
+ switchport mode trunk
+ spanning-tree guard root
+!
+interface FastEthernet0/3
+ description Connection to PC (Management Access - VLAN 99)
+ switchport access vlan 99
+ switchport mode access
+ switchport port-security mac-address sticky
+ switchport port-security mac-address sticky 2cf0.5d97.5625
+ switchport port-security
+ spanning-tree portfast
+ spanning-tree bpduguard enable
+!
+interface FastEthernet0/4
+ description Downlink to R1 Gi0/1 (VLAN 99)
+ switchport access vlan 99
+ switchport mode access
+!
+interface FastEthernet0/5
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/6
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/7
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/8
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/9
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/10
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/11
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/12
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/13
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/14
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/15
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/16
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/17
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/18
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/19
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/20
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/21
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/22
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/23
+ description Not in Use
+ shutdown
+!
+interface FastEthernet0/24
+ description Not in Use
+ shutdown
+!
+interface GigabitEthernet0/1
+ description Fiber Downlink to SW2 Gi0/1
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 10
+ switchport mode trunk
+!
+interface GigabitEthernet0/2
+ description Fiber Downlink to SW3 Gi0/1
+ switchport trunk encapsulation dot1q
+ switchport trunk allowed vlan 20
+ switchport mode trunk
+!
+interface Vlan1
  description Not in Use
  no ip address
  shutdown
 !
-interface GigabitEthernet0/0
- description Downlink to R2 Gi0/1
- ip address 192.168.3.1 255.255.255.252
- ip ospf authentication message-digest
- ip ospf message-digest-key 1 md5 S3cureOSPF!
- duplex auto
- speed auto
+interface Vlan10
+ description Sales (SVI to Ubuntu VM)
+ ip address 192.168.10.1 255.255.255.0
 !
-interface GigabitEthernet0/1
- description Uplink to SW1 Fa0/4 (Management VLAN 99)
- ip address 192.168.1.2 255.255.255.0
+interface Vlan20
+ description HR (SVI to Win10 VM)
+ ip address 192.168.20.1 255.255.255.0
+!
+interface Vlan99
+ description Management for connected ports (Fa0/3-Fa0/4)
+ ip address 192.168.1.1 255.255.255.0
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 S3cureOSPF!
- duplex auto
- speed auto
+ ip ospf 1 area 0
+ ipv6 address FD00:1:0:1::1/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
 !
 router ospf 1
- router-id 192.168.2.1
+ router-id 192.168.1.1
  area 0 authentication message-digest
- passive-interface Loopback0
+ passive-interface Vlan10
+ passive-interface Vlan20
  network 192.168.1.0 0.0.0.255 area 0
- network 192.168.2.1 0.0.0.0 area 0
- network 192.168.3.0 0.0.0.3 area 0
+ network 192.168.10.0 0.0.0.255 area 0
+ network 192.168.20.0 0.0.0.255 area 0
 !
-ip forward-protocol nd
-!
-no ip http server
-no ip http secure-server
-!
-ip ssh source-interface GigabitEthernet0/1
-ip ssh version 2
-!
-ipv6 ioam timestamp
+ip default-gateway 192.168.1.10
+ip http server
+ip http secure-server
 !
 !
 !
-control-plane
+ipv6 router ospf 1
+ router-id 192.168.1.1
+!
+!
+!
 !
 !
 line con 0
-line aux 0
-line 2
- no activation-character
- no exec
- transport preferred none
- transport output lat pad telnet rlogin lapb-ta mop udptn v120 ssh
- stopbits 1
+ speed 115200
 line vty 0 4
+ exec-timeout 15 0
+ login local
+ transport input ssh
+line vty 5 15
+ exec-timeout 15 0
  login local
  transport input ssh
 !
-scheduler allocate 20000 1000
-!
 end
-
-

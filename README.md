@@ -29,11 +29,11 @@ The lab currently demonstrates:
 - [x] 6. Implement STP/RSTP
 - [x] 7. Static Routing
 - [x] 8. Inter-VLAN Routing
-- [x] 9. DHCP and DNS
+- [x] 9. DHCP and DNS (IPv4)
 - [x] 10. Dynamic Routing (RIP, EIGRP, OSPF)
 - [x] 11. IPv6 Routing
-- [ ] 12. Basic ACLs and Port Security
-- [ ] 13. Wireless AP
+- [ ] 12. Wireless AP
+- [ ] 13. Basic ACLs and Port Security
 - [ ] 14. CDP/LLDP Verification
 - [ ] 15. NAT/NAT Overload (PAT) Simulation
 - [ ] 16. Gateway Redundancy with HSRP

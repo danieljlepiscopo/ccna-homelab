@@ -9,7 +9,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 
 ## Diagrams
 ### Logical Topology
-![Logical Topology](topology/logical-topology.png)
+![Logical Topology](topology/logical-diagram.png)
 
 ### Physical Topology
 ![Physical Topology](topology/physical-topology.png)
@@ -18,7 +18,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 As of September 2025, this homelab has completed 11 out of 16 planned labs.  
 The lab currently demonstrates:
 - End-to-end IPv4 and IPv6 connectivity
-- Dynamic routing across R1–R3 using RIP, EIGRP, and OSPF
+- Dynamic routing across R1–R3 using OSPF
 - Functional inter-VLAN routing on SW1 (Layer 3 switch)
 - DHCP services running from SW1
 - Internal DNS resolution via Ubuntu VM (BIND9)
@@ -96,8 +96,6 @@ ccna-homelab/
 - IPv6 addressing and OSPFv3
 - SSH and secure remote access setup
 - DHCP and DNS server configuration (Ubuntu BIND9)
-- ACLs and Port Security (in progress)
-- NAT/PAT and HSRP (upcoming)
 - Layer 2/3 troubleshooting using `ping`, `traceroute`, `show`, and `debug`
 
 ## License

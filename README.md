@@ -11,9 +11,6 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 ### Logical Topology
 ![Logical Topology](topology/logical-diagram.png)
 
-### Physical Topology
-![Physical Topology](topology/physical-topology.png)
-
 ## Current State
 As of September 2025, this homelab has completed 11 out of 16 planned labs.  
 The lab currently demonstrates:

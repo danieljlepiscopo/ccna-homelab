@@ -95,5 +95,12 @@ ccna-homelab/
 - DHCP and DNS server configuration (Ubuntu BIND9)
 - Layer 2/3 troubleshooting using `ping`, `traceroute`, `show`, and `debug`
 
+## How to Use This Repo
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/ccna-homelab.git
+2. Explore the /configs directory for running configs.
+3. Follow the /labs directory for step-by-step guides.
+
 ## License
 - MIT License

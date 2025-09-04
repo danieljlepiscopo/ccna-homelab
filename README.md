@@ -99,8 +99,8 @@ ccna-homelab/
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/ccna-homelab.git
-2. Explore the /configs directory for running configs.
-3. Follow the /labs directory for step-by-step guides.
+2. Explore the `/configs` directory for running configs.
+3. Follow the `/labs` directory for step-by-step guides.
 
 ## License
 - MIT License

@@ -32,7 +32,7 @@ The lab currently demonstrates:
 - [x] 7. Static Routing
 - [x] 8. Inter-VLAN Routing
 - [x] 9. DHCP and DNS (IPv4)
-- [x] 10. Dynamic Routing (RIP, EIGRP, OSPF)
+- [x] 10. Dynamic Routing (RIP, EIGRP, OSPFv2)
 - [x] 11. IPv6 Routing (OSPFv3)
 - [ ] 12. Wireless AP
 - [ ] 13. IP ACLs and Security Services

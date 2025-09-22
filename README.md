@@ -29,12 +29,12 @@ The lab currently demonstrates:
 - [x] 4. Enable SSH and Remote Access
 - [x] 5. VLANs and Trunking
 - [x] 6. Implement STP/RSTP
-- [x] 7. Static Routing
+- [x] 7. Static Routing (IPv4)
 - [x] 8. Inter-VLAN Routing
 - [x] 9. DHCP and DNS (IPv4)
 - [x] 10. Dynamic Routing (RIP, EIGRP, OSPFv2)
 - [x] 11. IPv6 Routing (OSPFv3)
-- [ ] 12. Wireless AP
+- [ ] 12. Wireless LAN (WLAN)
 - [ ] 13. IP ACLs and Security Services
 - [ ] 14. CDP/LLDP Verification
 - [ ] 15. NAT/NAT Overload (PAT) Simulation

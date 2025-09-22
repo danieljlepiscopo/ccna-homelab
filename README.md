@@ -14,7 +14,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 ![Logical Topology](topology/logical-diagram.png)
 
 ## Current State
-As of September 2025, this homelab has completed 11 out of 16 planned labs.  
+As of September 2025, this homelab has completed 11 out of 1& planned labs.  
 The lab currently demonstrates:
 - End-to-end IPv4 and IPv6 connectivity
 - Dynamic routing across R1–R3 using OSPF

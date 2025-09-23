@@ -3,7 +3,8 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 
 ## Devices Used
 - Cisco 1921 Routers (x3)
-- Cisco Catalyst 2960 Switches (x2)
+- Cisco Catalyst 2960 Switches (x1)
+- Cisco Catalyst 3650 24-POE Switch (x1)
 - Cisco Catalyst 3560v2 Switch (x1)
 - Cisco 2504 WLC Controller (x1)
 - Cisco 3802i AP (x1)

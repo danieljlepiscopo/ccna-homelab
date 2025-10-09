@@ -36,7 +36,7 @@ The lab currently demonstrates:
 - [x] 10. Dynamic Routing (RIP, EIGRP, OSPFv2)
 - [x] 11. IPv6 Routing (OSPFv3)
 - [ ] 12. Wireless LAN (WLAN)
-- [ ] 13. IP ACLs and Security Services
+- [X] 13. IP ACLs and Security Services
 - [ ] 14. CDP/LLDP Verification
 - [ ] 15. NAT/NAT Overload (PAT) Simulation
 - [ ] 16. Gateway Redundancy with HSRP
@@ -85,7 +85,8 @@ ccna-homelab/
     ├── lab8_inter-vlan_routing.md
     ├── lab9_dhcp_and_dns.md
     ├── lab10_dynamic_routing.md
-    └── lab11_ipv6_routing.md
+    ├── lab11_ipv6_routing.md
+    └── lab13_ip_acls_and_security_services.md
 
  ```
 

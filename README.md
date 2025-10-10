@@ -14,14 +14,13 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 ### Logical Topology
 ![Logical Topology](topology/logical-diagram.png)
 
-## Current State
-As of September 2025, this homelab has completed 11 out of 18 planned labs.  
-The lab currently demonstrates:
-- End-to-end IPv4 and IPv6 connectivity
-- Dynamic routing across R1–R3 using OSPF
-- Functional inter-VLAN routing on SW1 (Layer 3 switch)
-- DHCP services running from SW1
-- Internal DNS resolution via Ubuntu VM (BIND9)
+## Recent Lab Updates
+As of October 2025, this homelab has completed 12 out of 18 planned labs.  
+From the last lab, the homelab currently demonstrates:
+- Examples of the differences between Basic Standard IPv4 ACLs, Named ACLs, and Extended ACLs
+- Applied IPv4 ACLs such as: ICMP Control, SSH/Telnet Restriction, OSPF Protection, etc
+- Enabled Port Security on all access layer interfaces
+- Activated DHCP Snooping and configured Dynamic ARP Inspection (DAI) on access switches
 
 ## Goals
 - [x] 1. Cable and Power On Devices

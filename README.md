@@ -39,7 +39,7 @@ From the last lab, the homelab currently demonstrates:
 - [ ] 14. CDP/LLDP Verification
 - [ ] 15. NAT/NAT Overload (PAT) Simulation
 - [ ] 16. Gateway Redundancy with HSRP
-- [ ] 17. SNMP and Syslog Monitoring
+- [ ] 17. SNMP, NTP, and Syslog Monitoring
 - [ ] 18. QoS Fundamentals
 
 ## Key Subnets

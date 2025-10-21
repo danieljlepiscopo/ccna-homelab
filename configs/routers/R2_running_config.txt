@@ -1,7 +1,7 @@
 Building configuration...
 
 
-Current configuration : 2246 bytes
+Current configuration : 3130 bytes
 !
 version 15.8
 service timestamps debug datetime msec
@@ -90,6 +90,7 @@ interface Embedded-Service-Engine0/0
 interface GigabitEthernet0/0
  description Downlink to R3 Gi0/1
  ip address 192.168.5.1 255.255.255.252
+ ip access-group OSPF_R2_R3 in
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 S3cureOSPF!
  duplex auto
@@ -101,6 +102,7 @@ interface GigabitEthernet0/0
 interface GigabitEthernet0/1
  description Uplink to R1 Gi0/0
  ip address 192.168.3.2 255.255.255.252
+ ip access-group OSPF_R2_R1 in
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 S3cureOSPF!
  duplex auto
@@ -125,6 +127,29 @@ no ip http secure-server
 !
 ip ssh version 2
 !
+ip access-list standard MGMT_VTY
+ permit 192.168.1.0 0.0.0.255
+ deny   any
+!
+ip access-list extended OSPF_R2_R1
+ permit ospf host 192.168.3.2 host 224.0.0.5
+ permit ospf host 192.168.3.1 host 224.0.0.5
+ permit ospf host 192.168.3.2 host 224.0.0.6
+ permit ospf host 192.168.3.1 host 224.0.0.6
+ permit ospf host 192.168.3.2 host 192.168.3.1
+ permit ospf host 192.168.3.1 host 192.168.3.2
+ deny   ospf any any
+ permit ip any any
+ip access-list extended OSPF_R2_R3
+ permit ospf host 192.168.5.1 host 224.0.0.5
+ permit ospf host 192.168.5.2 host 224.0.0.5
+ permit ospf host 192.168.5.1 host 224.0.0.6
+ permit ospf host 192.168.5.2 host 224.0.0.6
+ permit ospf host 192.168.5.1 host 192.168.5.2
+ permit ospf host 192.168.5.2 host 192.168.5.1
+ deny   ospf any any
+ permit ip any any
+!
 ipv6 router ospf 1
  router-id 192.168.4.1
  passive-interface Loopback0
@@ -145,6 +170,8 @@ line 2
  transport output lat pad telnet rlogin lapb-ta mop udptn v120 ssh
  stopbits 1
 line vty 0 4
+ access-class MGMT_VTY in
+ exec-timeout 15 0
  login local
  transport input ssh
 !

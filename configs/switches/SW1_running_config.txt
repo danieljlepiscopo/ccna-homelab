@@ -1,6 +1,6 @@
 Building configuration...
 
-Current configuration : 6405 bytes
+Current configuration : 8617 bytes
 !
 version 15.0
 no service pad
@@ -35,6 +35,21 @@ ip dhcp pool VLAN10-POOL
 ip dhcp pool VLAN20-POOL
  network 192.168.20.0 255.255.255.0
  default-router 192.168.20.1
+ dns-server 8.8.8.8
+!
+ip dhcp pool WIFI_CORP
+ network 192.168.100.0 255.255.255.0
+ default-router 192.168.100.254
+ dns-server 192.168.10.12
+!
+ip dhcp pool WIFI_DEV
+ network 192.168.110.0 255.255.255.0
+ default-router 192.168.110.254
+ dns-server 192.168.10.12
+!
+ip dhcp pool WIFI_GUEST
+ network 192.168.120.0 255.255.255.0
+ default-router 192.168.120.254
  dns-server 8.8.8.8
 !
 !
@@ -139,8 +154,11 @@ interface FastEthernet0/4
  switchport mode access
 !
 interface FastEthernet0/5
- description Not in Use
- shutdown
+ description Uplink to WLC
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 99
+ switchport mode trunk
+ spanning-tree portfast trunk
 !
 interface FastEthernet0/6
  description Not in Use
@@ -221,27 +239,33 @@ interface FastEthernet0/24
 interface GigabitEthernet0/1
  description Fiber Downlink to SW2 Gi0/1
  switchport trunk encapsulation dot1q
- switchport trunk allowed vlan 10
+ switchport trunk allowed vlan 10,100,110,120
  switchport mode trunk
 !
 interface GigabitEthernet0/2
  description Fiber Downlink to SW3 Gi0/1
  switchport trunk encapsulation dot1q
- switchport trunk allowed vlan 20
+ switchport trunk allowed vlan 20,100,110,120
  switchport mode trunk
 !
 interface Vlan1
  description Not in Use
  no ip address
+ ip access-group NO_OSPF_ON_SVIs in
+ ip access-group DNS_ENFORCE out
  shutdown
 !
 interface Vlan10
  description Sales (SVI to Ubuntu VM)
  ip address 192.168.10.1 255.255.255.0
+ ip access-group DHCP_ONLY_V10 in
+ ip access-group ICMP_MGMT_ONLY out
 !
 interface Vlan20
  description HR (SVI to Win10 VM)
  ip address 192.168.20.1 255.255.255.0
+ ip access-group DHCP_ONLY_V20 in
+ ip access-group DNS_ENFORCE out
 !
 interface Vlan99
  description Management for connected ports (Fa0/3-Fa0/4)
@@ -253,6 +277,18 @@ interface Vlan99
  ipv6 enable
  ipv6 ospf 1 area 0
 !
+interface Vlan100
+ description CorpWiFi GW
+ ip address 192.168.100.254 255.255.255.0
+!
+interface Vlan110
+ description DevWiFi GW
+ ip address 192.168.110.254 255.255.255.0
+!
+interface Vlan120
+ description GuestWiFi GW
+ ip address 192.168.120.254 255.255.255.0
+!
 router ospf 1
  router-id 192.168.1.1
  area 0 authentication message-digest
@@ -263,10 +299,43 @@ router ospf 1
  network 192.168.20.0 0.0.0.255 area 0
 !
 ip default-gateway 192.168.1.10
-ip http server
-ip http secure-server
+no ip http server
+no ip http secure-server
 !
 !
+!
+ip access-list standard MGMT_VTY
+ permit 192.168.1.0 0.0.0.255
+ deny   any
+!
+ip access-list extended DHCP_ONLY_V10
+ remark Allows client broadcasts and SVI replies; block any rogue DHCP servers
+ permit udp any eq bootpc any eq bootps
+ permit udp host 192.168.10.1 eq bootps any eq bootpc
+ deny   udp any eq bootps any
+ permit ip any any
+ip access-list extended DHCP_ONLY_V20
+ remark Allows client broadcasts and SVI replies; block any rogue DHCP servers
+ permit udp any eq bootpc any eq bootps
+ permit udp host 192.168.20.1 eq bootps any eq bootpc
+ deny   udp any eq bootps any
+ permit ip any any
+ip access-list extended DNS_ENFORCE
+ remark Only allow DNS to 192.168.10.12 (Ubuntu)
+ permit udp any host 192.168.10.12 eq domain
+ permit tcp any host 192.168.10.12 eq domain
+ deny   udp any any eq domain
+ deny   tcp any any eq domain
+ permit ip any any
+ip access-list extended ICMP_MGMT_ONLY
+ remark Allow mgmt to ping into VLAN 10 & 20; block other inter-VLAN ICMP
+ permit icmp 192.168.1.0 0.0.0.255 192.168.10.0 0.0.0.255 echo
+ permit icmp 192.168.1.0 0.0.0.255 192.168.20.0 0.0.0.255 echo
+ deny   icmp any any
+ permit ip any any
+ip access-list extended NO_OSPF_ON_SVIs
+ deny   ospf any any
+ permit ip any any
 !
 ipv6 router ospf 1
  router-id 192.168.1.1
@@ -278,6 +347,7 @@ ipv6 router ospf 1
 line con 0
  speed 115200
 line vty 0 4
+ access-class MGMT_VTY in
  exec-timeout 15 0
  login local
  transport input ssh

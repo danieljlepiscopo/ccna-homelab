@@ -1,0 +1,542 @@
+For this lab, we’re going to extend the homelab into the wireless domain. Wireless networking is accomplished with a Wireless Controller (WLC) and an Access Point (AP), such as my Cisco 2504 Wireless LAN Controller (WLC) and Cisco 3802i lightweight AP. The WLC provides centralized WLAN management, while the AP includes client access.
+
+Here are the steps to get wireless up and running:
+
+1. **Physical Connectivity** 
+2. **VLAN/Interface configuration on SW1/SW2**
+3. **Integrate WLC into the existing VLAN scheme**
+4. **Create a WLAN on the WLC and map it to WiFi VLANs**
+5. **Join a lightweight AP to the WLC via CAPWAP**
+6. **Add WLAN Security**
+7. **Test Connectivity**
+8. **Wrap-Up**
+
+Let’s get started by physically connecting everything.
+
+### **Physical Connectivity between the WLC, AP, and wired LAN**
+
+When it comes to the physical connectivity of the WLC and the AP, we had to migrate the old Cisco Catalyst 2960 to keep to our two-tier approach. With the new 3560 with 24-POE as our new SW2, we can connect the devices like this:
+
+- **`WLC Port 1** → **SW1 Fa0/5**` (trunk, VLAN 99 native, VLAN 100 allowed for WiFi)
+- **`AP Ethernet** → **SW2 Fa0/4`** (trunk, VLAN 99 native, VLAN 100 allowed for WiFi)
+
+Here is a before and after of the WLC and AP actually being connected to my lab. I was able to use the ceiling mount for the AP and connect it to the side of my homelab.
+
+![WLC and AP Setup.jpg](attachment:2f8ed22c-17a8-42b2-8f9c-142ec564c4d8:WLC_and_AP_Setup.jpg)
+
+![Cisco WLC and AP.jpg](attachment:eb7aba22-f32e-4597-9218-7858cf8e66f8:Cisco_WLC_and_AP.jpg)
+
+Next, let’s configure the interfaces and VLANs on SW1 and SW2 for these physical connections.
+
+### **VLAN/Interface configuration on SW1/SW2**
+
+Here’s the fun part: now we get to connect these devices on the control and data planes. Let’s do a basic Central switching, where all the WLAN client traffic is tunneled over Control and Provisioning of Wireless Access Points (CAPWAP) to the WLC, and then tagged out the WLC uplink. **Meaning, only the WLC link needs to be a trunk with all WLAN VLANs allowed.**
+
+Later, we can add in a FlexConnect (Local Switching) topology to showcase how remote sites work.
+
+First, let’s get a plan together for our VLANs/SSIDs.
+
+**SSID/VLANs**
+
+Here are our SSIDS on the left and the associated VLANs with their IPs on the right:
+
+- `CorpWiFi`: **VLAN 100** with `192.168.100.0/24`
+- `DevWiFi`: **VLAN 110** with `192.168.110.0/24`
+- `GuestWiFi`: **VLAN 120** with `192.168.120.0/24`
+
+We have VLAN99 on both SW1 and SW2, so we’re going to configure these SSIDs on our core switch (SW1) and then create SVIs for them on SW1 so it knows how to pass the data between the WLC and the interfaces to the AP.
+
+We’re also going to configure DHCP on SW1 as well, so these SSIDs have a pool to assign their IPs to.
+
+**SW1**
+
+```bash
+conf t
+!
+vlan 100
+ name WiFi-Corp
+vlan 110
+ name WiFi-Dev
+vlan 120
+ name WiFi-Guest
+!
+! --- SVIs (gateways) for WLANs
+interface Vlan100
+ description CorpWiFi GW
+ ip address 192.168.100.254 255.255.255.0
+ no shut
+exit
+!
+interface Vlan110
+ description DevWiFi GW
+ ip address 192.168.110.254 255.255.255.0
+ no shut
+exit
+!
+interface Vlan120
+ description GuestWiFi GW
+ ip address 192.168.120.254 255.255.255.0
+ no shut
+exit
+!
+! --- DHCP pools on SW1
+ip dhcp pool WIFI_CORP
+ network 192.168.100.0 255.255.255.0
+ default-router 192.168.100.254
+ dns-server 192.168.10.12
+exit
+!
+ip dhcp pool WIFI_DEV
+ network 192.168.110.0 255.255.255.0
+ default-router 192.168.110.254
+ dns-server 192.168.10.12
+exit
+!
+ip dhcp pool WIFI_GUEST
+ network 192.168.120.0 255.255.255.0
+ default-router 192.168.120.254
+ dns-server 8.8.8.8
+exit
+!
+! --- Trunk to WLC
+interface FastEthernet0/5
+ description Uplink to WLC
+ switchport trunk encapsulation dot1q
+ switchport mode trunk
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan add 100,110,120
+ spanning-tree portfast trunk
+ no shut
+exit
+!
+! --- Make sure trunks to SW2/SW3 also carry these VLANs
+interface GigabitEthernet0/1
+ switchport trunk allowed vlan add 100,110,120
+exit
+!
+interface GigabitEthernet0/2
+ switchport trunk allowed vlan add 100,110,120
+exit
+!
+end
+wr
+```
+
+**Verify**
+
+```bash
+show vlan brief | inc 100|110|120|99
+show ip int brief | inc Vlan1|Vlan10|Vlan20|Vlan99|Vlan100|Vlan110|Vlan120
+show interfaces trunk
+show ip dhcp binding | inc 192.168.10.12|100.|110.|120.
+```
+
+Once the configuration is set on SW1 and verification checks are all good, we can move on to SW2 and add the AP port, trunk, and VLANs.
+
+**SW2**
+
+```bash
+conf t
+!
+vlan 100
+ name WiFi-Corp
+vlan 110
+ name WiFi-Dev
+vlan 120
+ name WiFi-Guest
+!
+!
+interface FastEthernet0/4
+ description Lightweight AP
+ switchport trunk encapsulation dot1q
+ switchport trunk native vlan 99
+ switchport trunk allowed vlan 99,100,110,120
+ switchport mode trunk
+end
+exit
+!
+! Trunks to SW1/SW3 must allow WLAN VLANs
+interface GigabitEthernet0/1
+ switchport trunk allowed vlan add 100,110,120
+exit
+!
+end
+wr
+```
+
+**Verify**
+
+```bash
+show vlan brief | inc 100|110|120|99
+show interfaces trunk
+show cdp neighbors detail | inc Native|IP address
+show power inline
+```
+
+Once we see that interfaces are up/up, VLANs are set, and trunks are allowing VLANS 100, 110, and 120. We should be all set! Now, let's configure the WLC and create dynamic interfaces.
+
+### **Integrate WLC into the existing VLAN scheme**
+
+For the configuration of the WLC, you have two options: either configure it on the CLI or on the GUI. For me, I’ll do the initial configuration on the CLI, and then I’ll see if I can log into the GUI via my browser and see if there’s anything else we should configure from there.
+
+**CLI**
+
+To configure the WLC via the CLI, you’ll plug in a rollover cable to the console port and then use a data transfer emulator, like PuTTY, for example, to console in. For that, you’ll answer questions related to the initial setup. Here is what I put for my configuration:
+
+```bash
+Enter Administrative User Name (24 characters max): dlepisco
+Enter Administrative Password (3 to 24 characters): **********
+Re-enter Administrative Password                 : **********
+
+Enable Link Aggregation (LAG) [yes][NO]: NO
+
+Management Interface IP Address: 192.168.1.50
+Management Interface Netmask: 255.255.255.0
+Management Interface Default Router: 192.168.1.1
+Cleaning up Provisioning SSID
+Management Interface VLAN Identifier (0 = untagged): 0
+Management Interface Port Num [1 to 4]: 1
+Management Interface DHCP Server IP Address: 192.168.1.1
+
+Virtual Gateway IP Address: 192.168.100.254
+
+Multicast IP Address: 239.1.1.1
+
+Mobility/RF Group Name: HOMELAB-RF
+
+Network Name (SSID): CorpWiFi
+
+Configure DHCP Bridging Mode [yes][NO]: NO
+
+Allow Static IP Addresses [YES][no]: YES
+
+Configure a RADIUS Server now? [YES][no]: no
+Warning! The default WLAN security policy requires a RADIUS server.
+Please see documentation for more details.
+
+Enter Country Code list (enter 'help' for a list of countries) [US]: US
+
+Enable 802.11b Network [YES][no]: no
+Enable 802.11a Network [YES][no]: YES
+Enable Auto-RF [YES][no]: YES
+
+Configure a NTP server now? [YES][no]: YES
+Enter the NTP server's IP address: 192.168.10.12
+Enter a polling interval between 3600 and 604800 secs: 604800
+
+Would you like to configure IPv6 parameters[YES][no]: no
+
+Configuration correct? If yes, system will save it and reset. [yes][NO]: yes
+```
+
+Initial Configuration Breakdown:
+
+- `Enable Link Aggregation (LAG) [yes][NO]: NO`: A LAG is similar to a bundle-ether, or a port-channel, where all ports (four) are bundled into a single virtual channel. Since we only have 1 port, I said “no” to this.
+- `Management Interface IP Address: 192.168.1.50`: The IP address that we’re giving the WLC.
+- `Management Interface Netmask: 255.255.255.0`: As well as the subnet mask on the WLC.
+- `Management Interface Default Router: 192.168.1.1`: Default gateway to SW1’s SVI.
+- `Management Interface VLAN Identifier (0 = untagged): 0`: Untagged VLANID, since we’re putting the WLC on the management subnet.
+- `Management Interface Port Num [1 to 4]: 1`:  We’ll be using 1 port on the WLC.
+- `Management Interface DHCP Server IP Address: 192.168.1.1`: SW1’s is our DHCP server, so let’s use its default gateway for this.
+- `Virtual Gateway IP Address: 192.168.100.254`: Last host of the WLC IP address, used for client web authentication - isn’t actually used in my homelab.
+- `Multicast IP Address: 239.1.1.1`: Used for the WLC to AP communication, the first available multicast IP is `239.1.1.1` - I could update this to a unicast, like `255.255.255.255`, but let’s get as close to production as we can.
+- `Mobility/RF Group Name: HOMELAB-RF`: WLCs share a group name, so in our “enterprise deployment”, we’ll use HOMELAB-RF.
+- `Network Name (SSID): CorpWiFi`: First initial SSID, one of the three we’re creating.
+- `Configure DHCP Bridging Mode [yes][NO]: NO`: We’ll want our WLC to forward DHCP requests to SW1, since it’s our DHCP server, for IP assignments.
+- `Allow Static IP Addresses [YES][no]: YES`:  Setting this to “yes” since most enterprise networks do the same, even if we won’t have much of any static IP addressing.
+- `Configure a RADIUS Server now? [YES][no]: no`: This will make us use WPA2-PSK instead of 802.1X; we can always update this later if we do put together a RADIUS/TACACS+ AAA server.
+- `Enter Country Code list (enter 'help' for a list of countries) [US]: US`:  US for being in the United States.
+- `Enable 802.11b Network [YES][no]: no`: Enterprise networks typically disable 802.11b, since it’s slower than the others.
+- `Enable 802.11a Network [YES][no]: YES`: We will want to enable 802.11a.
+- `Enable Auto-RF [YES][no]: YES`: Setting this to “yes” means that this feature will automatically adjust channel/power settings based on the environment the WLC is in.
+- `Configure a NTP server now? [YES][no]: YES`: We need to say “yes” because the CAPWAP needs to be synchronized by NTP.
+- `Enter the NTP server's IP address: 192.168.10.12`: This is the Ubuntu VM, which will handle NTP for our lab.
+- `Enter a polling interval between 3600 and 604800 secs: 604800`: This setting is related to Cisco’s “Smart Call” services. Since it doesn’t really apply to the lab, let’s set it to the largest time for minimal noise.
+- `Would you like to configure IPv6 parameters[YES][no]: no`: For simplicity’s sake, let’s just configure IPv4 for this WLC.
+
+After the initial configuration is set, the WLC will reboot and bring you to the main CLI. Here we will be able to build our WLANs (SSIDs). 
+
+Consoled into the WLC, after logging in, let’s see what is currently configured on the WLC:
+
+```bash
+(Cisco Controller) > show interface summary
+
+ Number of Interfaces.......................... 2
+
+Interface Name                   Port Vlan Id  IP Address      Type    Ap Mgr Guest
+-------------------------------- ---- -------- --------------- ------- ------ -----
+management                       1    untagged 192.168.1.50    Static  Yes    No
+virtual                          N/A  N/A      192.168.100.254 Static  No     No
+
+```
+
+- The `management` interface is for GUI access, AP-join, and management control. While the `virtual` interface is used for web authentication, DHCP relay, and other features.
+
+Now we need to map each WLAN (SSID) to the correct VLAN via its dynamic interface on the WLC. So, now let’s build our SSID/VLAN for each of the SSIDs we created on our switches.
+
+**CorpWiFi Interface**
+
+```bash
+(Cisco Controller) > config interface create CorpWiFi 100
+(Cisco Controller) > config interface address dynamic-interface CorpWiFi 192.168.100.2 255.255.255.0 192.168.100.1
+(Cisco Controller) > config interface dhcp dynamic-interface CorpWiFi primary 192.168.100.1
+(Cisco Controller) > config interface port CorpWiFi 1
+(Cisco Controller) > save config
+Are you sure you want to save? (y/n) y
+```
+
+**DevWiFi Interface**
+
+```bash
+(Cisco Controller) > config interface create DevWiFi 110
+(Cisco Controller) > config interface address dynamic-interface DevWiFi 192.168.110.2 255.255.255.0 192.168.110.1
+(Cisco Controller) > config interface dhcp dynamic-interface DevWiFi primary 192.168.110.1
+(Cisco Controller) > config interface port DevWiFi 1
+(Cisco Controller) > save config
+Are you sure you want to save? (y/n) y
+```
+
+**GuestWiFi Interface**
+
+```bash
+(Cisco Controller) > config interface create GuestWiFi 120
+(Cisco Controller) > config interface address dynamic-interface GuestWiFi 192.168.120.2 255.255.255.0 192.168.120.1
+(Cisco Controller) > config interface dhcp dynamic-interface GuestWiFi primary 192.168.120.1
+(Cisco Controller) > config interface port GuestWiFi 1
+(Cisco Controller) > save config
+Are you sure you want to save? (y/n) y
+```
+
+**Verify**
+
+```bash
+(Cisco Controller) > show interface summary
+
+Number of Interfaces.......................... 5
+
+Interface Name                   Port Vlan Id  IP Address      Type    Ap Mgr Guest
+
+---
+
+corpwifi                         1    100      192.168.10.2    Dynamic No     No
+devwifi                          1    110      192.168.110.2   Dynamic No     No
+guestwifi                        1    120      192.168.20.2    Dynamic No     No
+management                       1    untagged 192.168.1.50    Static  Yes    No
+virtual                          N/A  N/A      192.168.100.254 Static  No     No
+```
+
+- With this output, we see that all three WLANs (SSIDs) are configured dynamically and on the correct VLANs.
+
+With each dynamic interface now set, these will act as the WLC’s gateway for that specific VLAN, allowing it to tag traffic for that SSID. We essentially created a trunk between the WLC and SW1, instructing the WLC to identify which VLANs are “native” to it.
+
+### **Create a WLAN on the WLC and map it to WiFi VLANs**
+
+Up next, we need to create the WLANS (SSIDs) and bind them to the dynamic interfaces. Here’s how we’ll configure them:
+
+**CorpWiFi**
+
+```bash
+(Cisco Controller) > config wlan create 1 CorpWiFi CorpWiFi
+(Cisco Controller) > config wlan interface 1 CorpWiFi
+(Cisco Controller) > config wlan enable 1
+(Cisco Controller) > save config
+Are you sure you want to save? (y/n) y
+```
+
+**DevWiFi**
+
+```bash
+(Cisco Controller) > config wlan create 2 DevWiFi DevWiFi
+(Cisco Controller) > config wlan interface 2 DevWiFi
+(Cisco Controller) > config wlan enable 2
+(Cisco Controller) > save config
+Are you sure you want to save? (y/n) y
+```
+
+**GuestWiFi**
+
+```bash
+(Cisco Controller) > config wlan create 3 GuestWiFi GuestWiFi
+(Cisco Controller) > config wlan interface 3 GuestWiFi
+(Cisco Controller) > config wlan enable 3
+(Cisco Controller) > save config
+Are you sure you want to save? (y/n) y
+```
+
+**Verify**
+
+```bash
+(Cisco Controller) > show wlan summary
+
+Number of WLANs.................................. 3
+
+WLAN ID  WLAN Profile Name / SSID                                                  Status    Interface Name
+
+---
+
+1        CorpWiFi / CorpWiFi                                                      Enabled   corpwifi
+2        DevWiFi / DevWiFi                                                        Enabled   devwifi
+3        GuestWiFi / GuestWiFi                                                    Enabled   guestwifi
+```
+
+Confirming that all three SSIDs are showing up as enabled with the correct interface name means that we’ve bound them correctly! Let’s now make sure that the AP and WLC are creating a CAPWAP and talking together.
+
+### **Join a lightweight AP to the WLC via CAPWAP**
+
+Before we add any further configuration to our SSIDs, let’s make sure that our CAPWAP comes up. Our CAPWAP is both the control and data plane for everything wireless about my homelab - it’s the difference between connecting to a specific SSID and them not showing up at all.
+ If the AP won’t join, then:
+
+1. It won’t pull the WLAN SSIDs
+2. It won’t pull VLANs
+3. It won’t pull updated security features or best practices
+
+Confirming that the CAPWAP is up, then we can add security (WPA2, web auth, etc.) once the SSIDs are broadcasting.
+
+**Check WLC Discovery**
+
+First, let’s see if our AP is discovering and registering with the WLC. To do this, run:
+
+**WLC**
+
+```bash
+(Cisco Controller) > show ap summary
+
+Number of APs.................................... 0
+
+Global AP User Name.............................. Not Configured
+Global AP Dot1x User Name........................ Not Configured
+
+```
+
+Since our WLC doesn’t see any APs, let’s check the discovery process next.
+
+**Discovery Process**
+
+To make sure that our AP connects to our WLC with the AP to WLC CAPWAP connection, we’ll need to make sure that:
+
+1. Our SW2’s Fa0/4 is configured as an access switchport.
+2. Configure our AP if it doesn’t automatically connect to the WLC.
+
+We’ve configured our SW2 Fa0/4 interface, so we’ll need to console into the AP and manually configure the CAPWAP between the AP and WLC. To do that, we’ll set this configuration on the AP when it boots back up:
+**AP**
+
+```bash
+AP74a2.e62d.4fb5#capwap ap controller ip address 192.168.1.50
+AP74a2.e62d.4fb5#capwap ap hostname AP1
+Updated AP hostname to AP1.
+Please note that if AP is already associated to WLC,
+the new hostname will only reflect on WLC after AP dis-associates and rejoins.
+AP1#relaod
+System configuration has been modified. Save? [yes/no]: yes
+Proceed with reload? [confirm]
+```
+
+Command Breakdown:
+
+- `capwap ap controller ip address 192.168.1.50`: Here we are configuring the CAPWAP by telling the AP that the WLC’s IP address is `192.168.1.50`.
+- `capwap ap hostname AP1`: Sets the hostname of the AP to `AP1` and connects to the WLC with said hostname via CAPWAP.
+
+After the device has reloaded, it will go through its boot-up process, of which we want to see the message of the AP joining the wireless controller, such as:
+
+```bash
+%CAPWAP-5-JOINEDCONTROLLER: AP has joined controller Cisco_00:d9:85
+```
+
+**Verify WLC Discovery from the WLC**
+
+Similar to when we checked on the WLC before, let’s check again to see if the CAPWAP connection has been made on the controller side of things:
+**WLC**
+
+```bash
+(Cisco Controller) >show ap summary
+
+Number of APs.................................... 1
+
+Global AP User Name.............................. Not Configured
+Global AP Dot1x User Name........................ Not Configured
+
+AP Name                         Slots  AP Model              Ethernet MAC       Location              Country     IP Address       Clients  DSE Location
+------------------------------  -----  --------------------  -----------------  --------------------  ----------  ---------------  -------  --------------
+AP1                             2      AIR-CAP3602I-A-K9      74:a2:e6:2d:4f:b5  default location      US          192.168.1.20     0        [0 ,0 ,0 ]
+```
+
+With this verification, we’ve concluded that the CAPWAP connection has been made! What’s even cooler is that I can now we can see these SSIDs on my home network:
+
+<center>
+  <img width="400" height="500" alt="Fiber connections on switches" class="center" src="https://github.com/user-attachments/assets/ccdf5a68-f271-46b5-aa95-fc4bb36d6aa1" />
+</center>
+
+<center>
+  <img width="400" height="500" alt="Fiber connections on switches" class="center" src="https://github.com/user-attachments/assets/d5602a7d-e2a1-4941-8f0a-d1615d171d52" />
+</center>
+
+### **Add WLAN Security**
+
+Up next, let’s add some security to each of the WLANs we created on the WLC, each showcasing different security types and encryptions:
+
+| SSID | Security Type | Encryption | Authentication Method | Purpose |
+| --- | --- | --- | --- | --- |
+| CorpWiFi | WPA2-PSK | AES-CCMP | Pre-Shared Key | Internal/Corperate Use |
+| DevWiFi | WPA-PSK | TKIP | Pre-Shared Key | FlexConnect |
+| GuestWiFi | Open | None | Web-Authentication | Guest Internet |
+
+Why We’re Using These Security Types/Encrytpion:
+
+- `CorpWiFi`: WPA2-PSK is a common simple/secure Wi-Fi for modern networks. Although not as new as WP3, this is modern enough for my devices.
+- `DevWiFi`: Using for FlexConnect and to simulate older legacy devices, a lot of networks keep WPA/TKIP encryption for legacy devices before migrating to WPA2.
+    - TKIP has been deprecated because of security vulnerabilities, so it’s not recommend for production networks.
+- `GuestWiFi`: No encryption, however the WLC intercepts the HTTP request and redirects the user the a web-login page (Cisco’s captive portal).
+
+Now that we understand each type of security/encryption we’re adding to each SSID, let’s take a look at the configuration of each.
+
+**CorpWiFi (WPA2-PSK)**
+
+```bash
+(Cisco Controller) > config wlan disable 1
+(Cisco Controller) > config wlan security wpa enable 1
+(Cisco Controller) > config wlan security wpa wpa2 enable 1
+(Cisco Controller) > config wlan security wpa akm psk set-key ascii StrongCorpPassword 1
+(Cisco Controller) > config wlan security wpa akm psk enable 1
+(Cisco Controller) > config wlan enable 1
+```
+
+**DevWiFi (WPA-PSK)**
+
+```bash
+(Cisco Controller) > config wlan disable 2
+(Cisco Controller) > config wlan security wpa enable 2
+(Cisco Controller) > config wlan security wpa wpa1 enable 2
+(Cisco Controller) > config wlan security wpa akm 802.1x disable 2
+(Cisco Controller) > config wlan security wpa wpa2 disable 2
+(Cisco Controller) > config wlan security wpa akm psk enable 2
+(Cisco Controller) > config wlan security wpa akm psk set-key ascii 0 DevPassword123 2
+(Cisco Controller) > config wlan enable 2
+```
+
+**GuestWiFi (Open Access)**
+
+```bash
+(Cisco Controller) > config wlan disable 3
+(Cisco Controller) > config wlan security wpa disable 3
+(Cisco Controller) > config wlan security web-auth enable 3
+(Cisco Controller) > config wlan peer-to-peer drop 3
+(Cisco Controller) > config wlan dhcp required enable 3
+(Cisco Controller) > config wlan mfp client disable 3
+(Cisco Controller) > config wlan dhcp_server 3 0.0.0.0 required
+(Cisco Controller) > config wlan enable 3
+```
+
+Command Breakdown:
+
+- **`config wlan security wpa enable <WLAN_ID>`**: Enables WPA or WPA2 on that WLAN.
+- `config wlan security wpa wpa2 enable <WLAN_ID>`: Enables WPA 2 and activates AWS/CCMP encrytpion.
+- 
+
+**Verify**
+```bash
+show wlan 1
+show wlan 2
+show wlan 3
+show wlan summary
+show ap summary
+```

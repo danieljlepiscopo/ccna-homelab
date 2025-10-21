@@ -85,6 +85,7 @@ ccna-homelab/
     ├── lab9_dhcp_and_dns.md
     ├── lab10_dynamic_routing.md
     ├── lab11_ipv6_routing.md
+    ├── lab12_wireless_lan.md
     └── lab13_ip_acls_and_security_services.md
 
  ```

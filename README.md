@@ -15,7 +15,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 ![Logical Topology](topology/logical-diagram.png)
 
 ## Recent Lab Updates
-As of October 2025, this homelab has completed 12 out of 18 planned labs.  
+As of October 2025, this homelab has completed 13 out of 18 planned labs.  
 From the last lab, the homelab currently demonstrates:
 - Examples of the differences between Basic Standard IPv4 ACLs, Named ACLs, and Extended ACLs
 - Applied IPv4 ACLs such as: ICMP Control, SSH/Telnet Restriction, OSPF Protection, etc

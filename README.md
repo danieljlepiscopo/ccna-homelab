@@ -34,7 +34,7 @@ From the last lab, the homelab currently demonstrates:
 - [x] 9. DHCP and DNS (IPv4)
 - [x] 10. Dynamic Routing (RIP, EIGRP, OSPFv2)
 - [x] 11. IPv6 Routing (OSPFv3)
-- [ ] 12. Wireless LAN (WLAN)
+- [X] 12. Wireless LAN (WLAN)
 - [X] 13. IP ACLs and Security Services
 - [ ] 14. CDP/LLDP Verification
 - [ ] 15. NAT/NAT Overload (PAT) Simulation

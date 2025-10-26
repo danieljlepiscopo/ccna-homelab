@@ -7,7 +7,7 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 - Cisco Catalyst 3650 24-POE Switch (x1)
 - Cisco Catalyst 3560v2 Switch (x1)
 - Cisco 2504 WLC Controller (x1)
-- Cisco 3802i AP (x1)
+- Cisco 3602i AP (x1)
 - Windows 10 PC (Oracle VM with Win10 & Ubuntu VMs)
 
 ## Diagrams

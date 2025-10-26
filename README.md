@@ -15,12 +15,11 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 ![Logical Topology](topology/logical-diagram.png)
 
 ## Recent Lab Updates
-As of October 2025, this homelab has completed 13 out of 18 planned labs.  
+As of October 2025, this homelab has completed 14 out of 18 planned labs.  
 From the last lab, the homelab currently demonstrates:
-- Examples of the differences between Basic Standard IPv4 ACLs, Named ACLs, and Extended ACLs
-- Applied IPv4 ACLs such as: ICMP Control, SSH/Telnet Restriction, OSPF Protection, etc
-- Enabled Port Security on all access layer interfaces
-- Activated DHCP Snooping and configured Dynamic ARP Inspection (DAI) on access switches
+- Verifying CDP is globally configured on all switches/routers
+- Enabled/verified LLDP is configured on all switches/routers
+- Compared the differences between the protocols
 
 ## Goals
 - [x] 1. Cable and Power On Devices
@@ -36,7 +35,7 @@ From the last lab, the homelab currently demonstrates:
 - [x] 11. IPv6 Routing (OSPFv3)
 - [X] 12. Wireless LAN (WLAN)
 - [X] 13. IP ACLs and Security Services
-- [ ] 14. CDP/LLDP Device Discovery
+- [X] 14. CDP/LLDP Device Discovery
 - [ ] 15. NAT/NAT Overload (PAT) Simulation
 - [ ] 16. Gateway Redundancy with HSRP
 - [ ] 17. SNMP, NTP, and Syslog Monitoring
@@ -86,7 +85,8 @@ ccna-homelab/
     ├── lab10_dynamic_routing.md
     ├── lab11_ipv6_routing.md
     ├── lab12_wireless_lan.md
-    └── lab13_ip_acls_and_security_services.md
+    ├── lab13_acls_and_security.md
+    └── lab14_cdp_lldp_.md
 
  ```
 

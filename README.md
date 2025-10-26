@@ -36,7 +36,7 @@ From the last lab, the homelab currently demonstrates:
 - [x] 11. IPv6 Routing (OSPFv3)
 - [X] 12. Wireless LAN (WLAN)
 - [X] 13. IP ACLs and Security Services
-- [ ] 14. CDP/LLDP Verification
+- [ ] 14. CDP/LLDP Device Discovery
 - [ ] 15. NAT/NAT Overload (PAT) Simulation
 - [ ] 16. Gateway Redundancy with HSRP
 - [ ] 17. SNMP, NTP, and Syslog Monitoring

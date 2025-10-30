@@ -17,9 +17,9 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 ## Recent Lab Updates
 As of October 2025, this homelab has completed 15 out of 18 planned labs.  
 From the last lab, the homelab currently demonstrates:
-- Created the topology for how NAT would work on my homelab
-- Explained, configured, verified, and removed Static NAT/Dynamic
-- Ended the lab with NAT Overload (PAT)
+- Created the topology for how NAT would work on my homelab.
+- Explained, configured, verified, and removed Static NAT/Dynamic NAT.
+- Ended the lab NAT Overload (PAT) explanation, and configuration.
 
 ## Goals
 - [x] 1. Cable and Power On Devices

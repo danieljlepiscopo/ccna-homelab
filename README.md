@@ -15,11 +15,11 @@ This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. 
 ![Logical Topology](topology/logical-diagram.png)
 
 ## Recent Lab Updates
-As of October 2025, this homelab has completed 14 out of 18 planned labs.  
+As of October 2025, this homelab has completed 15 out of 18 planned labs.  
 From the last lab, the homelab currently demonstrates:
-- Verifying CDP is globally configured on all switches/routers
-- Enabled/verified LLDP is configured on all switches/routers
-- Compared the differences between the protocols
+- Created the topology for how NAT would work on my homelab
+- Explained, configured, verified, and removed Static NAT/Dynamic
+- Ended the lab with NAT Overload (PAT)
 
 ## Goals
 - [x] 1. Cable and Power On Devices
@@ -36,7 +36,7 @@ From the last lab, the homelab currently demonstrates:
 - [X] 12. Wireless LAN (WLAN)
 - [X] 13. IP ACLs and Security Services
 - [X] 14. CDP/LLDP Device Discovery
-- [ ] 15. NAT/NAT Overload (PAT) Simulation
+- [X] 15. NAT/NAT Overload (PAT) Simulation
 - [ ] 16. Gateway Redundancy with HSRP
 - [ ] 17. SNMP, NTP, and Syslog Monitoring
 - [ ] 18. QoS Fundamentals

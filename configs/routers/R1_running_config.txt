@@ -1,7 +1,9 @@
 Building configuration...
 
 
-Current configuration : 2815 bytes
+Current configuration : 3133 bytes
+!
+! Last configuration change at 02:01:25 UTC Thu Oct 30 2025 by dan
 !
 version 15.8
 service timestamps debug datetime msec
@@ -66,6 +68,7 @@ redundancy
 !
 !
 !
+lldp run
 !
 !
 !
@@ -88,9 +91,11 @@ interface Embedded-Service-Engine0/0
  shutdown
 !
 interface GigabitEthernet0/0
- description Downlink to R2 Gi0/1
+ description Downlink to WAN R2 Gi0/1 (ISP)
  ip address 192.168.3.1 255.255.255.252
  ip access-group OSPF_R1_R2 in
+ ip nat outside
+ ip virtual-reassembly in
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 S3cureOSPF!
  duplex auto
@@ -102,6 +107,8 @@ interface GigabitEthernet0/0
 interface GigabitEthernet0/1
  description Uplink to SW1 Fa0/4 (Management VLAN 99)
  ip address 192.168.1.2 255.255.255.0
+ ip nat inside
+ ip virtual-reassembly in
  ip ospf authentication message-digest
  ip ospf message-digest-key 1 md5 S3cureOSPF!
  duplex auto
@@ -124,6 +131,8 @@ ip forward-protocol nd
 no ip http server
 no ip http secure-server
 !
+ip nat inside source list 1 interface GigabitEthernet0/0 overload
+ip route 0.0.0.0 0.0.0.0 192.168.3.2
 ip ssh source-interface GigabitEthernet0/1
 ip ssh version 2
 !
@@ -148,6 +157,7 @@ ipv6 router ospf 1
 ipv6 ioam timestamp
 !
 !
+access-list 1 permit 192.168.10.0 0.0.0.255
 !
 control-plane
 !

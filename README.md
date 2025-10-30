@@ -74,10 +74,13 @@ ccna-homelab/
 │   │   ├── R1-running-config.txt
 │   │   ├── R2-running-config.txt
 │   │   └── R3-running-config.txt
-│   └── switches/
-│       ├── SW1-running-config.txt
-│       ├── SW2-running-config.txt
-│       └── SW3-running-config.txt
+│   ├── switches/
+│   │   ├── SW1-running-config.txt
+│   │   ├── SW2-running-config.txt
+│   │   └── SW3-running-config.txt
+│   └── wireless/
+│       ├── WLC-config.txt
+│       └── AP1-config.txt
 └──labs/
     ├── lab1_cabling_setup.md
     ├── lab8_inter-vlan_routing.md

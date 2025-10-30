@@ -1,6 +1,8 @@
 Building configuration...
 
-Current configuration : 8617 bytes
+Current configuration : 8887 bytes
+!
+! Last configuration change at 04:10:43 UTC Mon Mar 1 1993 by dan
 !
 version 15.0
 no service pad
@@ -100,6 +102,7 @@ spanning-tree extend system-id
 spanning-tree vlan 99 priority 24576
 !
 vlan internal allocation policy ascending
+lldp run
 !
 ip tftp source-interface FastEthernet0/3
 ip ssh version 2
@@ -128,7 +131,6 @@ interface FastEthernet0/1
  switchport trunk native vlan 99
  switchport trunk allowed vlan 10,99
  switchport mode trunk
- spanning-tree guard root
 !
 interface FastEthernet0/2
  description Downlink to SW3 Fa0/1
@@ -259,7 +261,6 @@ interface Vlan10
  description Sales (SVI to Ubuntu VM)
  ip address 192.168.10.1 255.255.255.0
  ip access-group DHCP_ONLY_V10 in
- ip access-group ICMP_MGMT_ONLY out
 !
 interface Vlan20
  description HR (SVI to Win10 VM)
@@ -333,6 +334,11 @@ ip access-list extended ICMP_MGMT_ONLY
  permit icmp 192.168.1.0 0.0.0.255 192.168.20.0 0.0.0.255 echo
  deny   icmp any any
  permit ip any any
+ remark Allow mgmt-initiated pings into VLANs
+ remark Allow replies and common ICMP back to users
+ permit icmp any 192.168.10.0 0.0.0.255 echo-reply
+ permit icmp any 192.168.10.0 0.0.0.255 time-exceeded
+ permit icmp any 192.168.10.0 0.0.0.255 unreachable
 ip access-list extended NO_OSPF_ON_SVIs
  deny   ospf any any
  permit ip any any

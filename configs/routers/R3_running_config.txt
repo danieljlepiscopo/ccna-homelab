@@ -1,6 +1,202 @@
 Building configuration...
 
-Current configuration : 2540 bytes
+
+Current configuration : 3208 bytes
+!
+! Last configuration change at 01:09:45 UTC Thu Oct 30 2025 by dan
+!
+version 15.8
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname R2
+!
+boot-start-marker
+boot-end-marker
+!
+!
+enable secret 5 $1$BvlJ$72m.2ogxr61uGcxxNXU4//
+!
+no aaa new-model
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+
+
+!
+!
+!
+!
+ip domain name homelab.local
+ip cef
+ipv6 unicast-routing
+ipv6 cef
+!
+multilink bundle-name authenticated
+!
+!
+!
+key chain OSPF_KEYS
+ key 1
+  key-string S3cureOSPF!
+!
+!
+license udi pid CISCO1921/K9 sn FJC2039L2H2
+license boot module c1900 technology-package securityk9
+license boot module c1900 technology-package datak9
+!
+!
+username dan secret 5 $1$9glZ$m9x6DMCnOcRjhOPTBe4ji1
+username daniel privilege 15 secret 5 $1$2GSu$pu3RSSk1bO3NR9j4kxPGk.
+!
+redundancy
+!
+!
+!
+!
+lldp run
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+!
+interface Loopback0
+ description Internal LAN
+ ip address 192.168.4.1 255.255.255.255
+ ipv6 address FD00:1:0:4::1/128
+!
+interface Embedded-Service-Engine0/0
+ description Not in Use
+ no ip address
+ shutdown
+!
+interface GigabitEthernet0/0
+ description Downlink to R3 Gi0/1
+ ip address 192.168.5.1 255.255.255.252
+ ip access-group OSPF_R2_R3 in
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 S3cureOSPF!
+ duplex auto
+ speed auto
+ ipv6 address FD00:1:0:5::1/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+interface GigabitEthernet0/1
+ description Uplink to R1 Gi0/0
+ ip address 192.168.3.2 255.255.255.252
+ ip access-group OSPF_R2_R1 in
+ ip ospf authentication message-digest
+ ip ospf message-digest-key 1 md5 S3cureOSPF!
+ duplex auto
+ speed auto
+ ipv6 address FD00:1:0:3::2/64
+ ipv6 enable
+ ipv6 ospf 1 area 0
+!
+router ospf 1
+ router-id 192.168.4.1
+ auto-cost reference-bandwidth 1000
+ area 0 authentication message-digest
+ passive-interface Loopback0
+ network 192.168.3.0 0.0.0.3 area 0
+ network 192.168.4.1 0.0.0.0 area 0
+ network 192.168.5.0 0.0.0.3 area 0
+!
+ip forward-protocol nd
+!
+no ip http server
+no ip http secure-server
+!
+ip ssh version 2
+!
+ip access-list standard MGMT_VTY
+ permit 192.168.1.0 0.0.0.255
+ deny   any
+!
+ip access-list extended OSPF_R2_R1
+ permit ospf host 192.168.3.2 host 224.0.0.5
+ permit ospf host 192.168.3.1 host 224.0.0.5
+ permit ospf host 192.168.3.2 host 224.0.0.6
+ permit ospf host 192.168.3.1 host 224.0.0.6
+ permit ospf host 192.168.3.2 host 192.168.3.1
+ permit ospf host 192.168.3.1 host 192.168.3.2
+ deny   ospf any any
+ permit ip any any
+ip access-list extended OSPF_R2_R3
+ permit ospf host 192.168.5.1 host 224.0.0.5
+ permit ospf host 192.168.5.2 host 224.0.0.5
+ permit ospf host 192.168.5.1 host 224.0.0.6
+ permit ospf host 192.168.5.2 host 224.0.0.6
+ permit ospf host 192.168.5.1 host 192.168.5.2
+ permit ospf host 192.168.5.2 host 192.168.5.1
+ deny   ospf any any
+ permit ip any any
+!
+ipv6 router ospf 1
+ router-id 192.168.4.1
+ passive-interface Loopback0
+!
+ipv6 ioam timestamp
+!
+!
+!
+control-plane
+!
+!
+line con 0
+line aux 0
+line 2
+ no activation-character
+ no exec
+ transport preferred none
+ transport output lat pad telnet rlogin lapb-ta mop udptn v120 ssh
+ stopbits 1
+line vty 0 4
+ access-class MGMT_VTY in
+ exec-timeout 15 0
+ login local
+ transport input ssh
+!
+scheduler allocate 20000 1000
+!
+end
+
+R2# exit
+Connection to 192.168.4.1 closed by remote host.
+Connection to 192.168.4.1 closed.
+C:\Users\Dan>
+C:\Users\Dan>
+C:\Users\Dan> ssh 192.168.6.1
+(dan@192.168.6.1) Password:
+
+R3>en
+Password:
+R3#show run
+R3#show running-config
+Building configuration...
+
+Current configuration : 2549 bytes
 !
 version 15.8
 service timestamps debug datetime msec
@@ -65,6 +261,7 @@ redundancy
 !
 !
 !
+lldp run
 !
 !
 !

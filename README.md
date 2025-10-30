@@ -86,7 +86,8 @@ ccna-homelab/
     ├── lab11_ipv6_routing.md
     ├── lab12_wireless_lan.md
     ├── lab13_acls_and_security.md
-    └── lab14_cdp_lldp_.md
+    ├── lab14_cdp_lldp.md
+    └── lab15_nat_overload_pat.md
 
  ```
 

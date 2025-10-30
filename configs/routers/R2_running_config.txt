@@ -1,7 +1,9 @@
 Building configuration...
 
 
-Current configuration : 3130 bytes
+Current configuration : 3208 bytes
+!
+! Last configuration change at 01:09:45 UTC Thu Oct 30 2025 by dan
 !
 version 15.8
 service timestamps debug datetime msec
@@ -66,6 +68,7 @@ redundancy
 !
 !
 !
+lldp run
 !
 !
 !

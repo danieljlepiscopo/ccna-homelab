@@ -1,6 +1,6 @@
 Building configuration...
 
-Current configuration : 7483 bytes
+Current configuration : 7492 bytes
 !
 version 15.0
 no service pad
@@ -69,6 +69,7 @@ spanning-tree extend system-id
 spanning-tree vlan 99 priority 28672
 !
 vlan internal allocation policy ascending
+lldp run
 !
 ip ssh version 2
 !

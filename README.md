@@ -19,7 +19,7 @@ As of October 2025, this homelab has completed 15 out of 18 planned labs.
 From the last lab, the homelab currently demonstrates:
 - Created the topology for how NAT would work on my homelab.
 - Explained, configured, verified, and removed Static NAT/Dynamic NAT.
-- Ended the lab NAT Overload (PAT) explanation, and configuration.
+- Ended the lab NAT Overload (PAT) explanation and configuration.
 
 ## Goals
 - [x] 1. Cable and Power On Devices
@@ -37,9 +37,9 @@ From the last lab, the homelab currently demonstrates:
 - [X] 13. IP ACLs and Security Services
 - [X] 14. CDP/LLDP Device Discovery
 - [X] 15. NAT/NAT Overload (PAT) Simulation
-- [ ] 16. Gateway Redundancy with HSRP
-- [ ] 17. SNMP, NTP, and Syslog Monitoring
-- [ ] 18. QoS Fundamentals
+- [ ] 16. QoS Fundamentals
+- [ ] 17. Gateway Redundancy with HSRP
+- [ ] 18. SNMP, NTP, and Syslog Monitoring
 
 ## Key Subnets
 | Device | Interface | IP Address      |

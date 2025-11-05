@@ -1,14 +1,22 @@
 # CCNA Homelab
-This is my homelab to help me prepare for the Cisco CCNA 200-301 certification. I'm using real Cisco IOS routers and switches to build practical skills in networking concepts like VLANs, STP, static routing, and more. The goal is to simulate a real-world enterprise environment and reinforce theory with hands-on experience.
+Hands-on CCNA 200-301 homelab using real Cisco IOS routers and switches to master enterprise networking concepts through practical, documented labs.
 
 ## Devices Used
+### Routers
 - Cisco 1921 Routers (x3)
-- Cisco Catalyst 3560C Switch (x1)
-- Cisco Catalyst 3650 24-POE Switch (x1)
-- Cisco Catalyst 3560v2 Switch (x1)
-- Cisco 2504 WLC Controller (x1)
-- Cisco 3602i AP (x1)
-- Windows 10 PC (Oracle VM with Win10 & Ubuntu VMs)
+
+### Switches
+- Cisco Catalyst 3560C (Layer 3)
+- Cisco Catalyst 3650 24-POE (Layer 3)
+- Cisco Catalyst 3560v2 (Layer 2)
+
+### Wireless
+- Cisco 2504 Wireless LAN Controller (WLC)
+- Cisco 3602i Access Point (AP)
+
+### Endpoints
+- Windows 10 PC (with Oracle VMs: Windows 10 & Ubuntu)
+
 
 ## Diagrams
 ### Logical Topology
@@ -20,6 +28,8 @@ From the last lab, the homelab currently demonstrates:
 - Created the topology for how NAT would work on my homelab.
 - Explained, configured, verified, and removed Static NAT/Dynamic NAT.
 - Ended the lab NAT Overload (PAT) explanation and configuration.
+Next up: QoS Fundamentals lab: focusing on DiffServ, DSCP markings, and queue behavior.
+Last updated: October 2025
 
 ## Goals
 - [x] 1. Cable and Power On Devices
@@ -56,6 +66,7 @@ From the last lab, the homelab currently demonstrates:
 | R2     | Lo0       | 192.168.4.1/32  |
 | R3     | Gi0/1     | 192.168.5.2/30  |
 | R3     | Lo0       | 192.168.6.1/32  |
+
 
 ## Routing Path
 PC > SW1 > R1 > R2 > R3 (and back)
@@ -104,6 +115,11 @@ ccna-homelab/
 - SSH and secure remote access setup
 - DHCP and DNS server configuration (Ubuntu BIND9)
 - Layer 2/3 troubleshooting using `ping`, `traceroute`, `show`, and `debug`
+- IPv6 Routing and Dual-Stack Networking
+- Wireless LAN Controller and AP Configuration
+- ACLs (Standard, Extended) and Security Services
+- CDP and LLDP Configured
+- Network Address Translation (Static, Dynamic, PAT)
 
 ## How to Use This Repo
 1. Clone the repository:
@@ -111,6 +127,7 @@ ccna-homelab/
    git clone https://github.com/yourusername/ccna-homelab.git
 2. Explore the `/configs` directory for running configs.
 3. Follow the `/labs` directory for step-by-step guides.
+Feel free to fork, modify, and use this homelab structure for your own CCNA learning.
 
 ## License
 - MIT License

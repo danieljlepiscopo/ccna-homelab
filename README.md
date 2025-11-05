@@ -22,6 +22,7 @@ From the last lab, the homelab currently demonstrates:
 - Ended the lab NAT Overload (PAT) explanation and configuration.
 
 Next up: QoS Fundamentals lab: focusing on DiffServ, DSCP markings, and queue behavior.
+
 Last updated: October 2025
 
 ## Goals

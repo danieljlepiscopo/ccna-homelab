@@ -2,21 +2,13 @@
 Hands-on CCNA 200-301 homelab using real Cisco IOS routers and switches to master enterprise networking concepts through practical, documented labs.
 
 ## Devices Used
-### Routers
 - Cisco 1921 Routers (x3)
-
-### Switches
 - Cisco Catalyst 3560C (Layer 3)
 - Cisco Catalyst 3650 24-POE (Layer 3)
 - Cisco Catalyst 3560v2 (Layer 2)
-
-### Wireless
 - Cisco 2504 Wireless LAN Controller (WLC)
 - Cisco 3602i Access Point (AP)
-
-### Endpoints
 - Windows 10 PC (with Oracle VMs: Windows 10 & Ubuntu)
-
 
 ## Diagrams
 ### Logical Topology
@@ -28,6 +20,7 @@ From the last lab, the homelab currently demonstrates:
 - Created the topology for how NAT would work on my homelab.
 - Explained, configured, verified, and removed Static NAT/Dynamic NAT.
 - Ended the lab NAT Overload (PAT) explanation and configuration.
+
 Next up: QoS Fundamentals lab: focusing on DiffServ, DSCP markings, and queue behavior.
 Last updated: October 2025
 
@@ -127,6 +120,7 @@ ccna-homelab/
    git clone https://github.com/yourusername/ccna-homelab.git
 2. Explore the `/configs` directory for running configs.
 3. Follow the `/labs` directory for step-by-step guides.
+
 Feel free to fork, modify, and use this homelab structure for your own CCNA learning.
 
 ## License

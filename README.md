@@ -15,15 +15,15 @@ Hands-on CCNA 200-301 homelab using real Cisco IOS routers and switches to maste
 ![Logical Topology](topology/logical-diagram.png)
 
 ## Recent Lab Updates
-As of October 2025, this homelab has completed 15 out of 18 planned labs.  
+As of November 2025, this homelab has completed 16 out of 18 planned labs.  
 From the last lab, the homelab currently demonstrates:
-- Created the topology for how NAT would work on my homelab.
-- Explained, configured, verified, and removed Static NAT/Dynamic NAT.
-- Ended the lab NAT Overload (PAT) explanation and configuration.
+- Understanding why we need QoS and the three main models: Best Effort, IntServ, and DiffServ.
+- Going through Classification and Marking, Queueing, Policing/Shaping, and Congestion Avoidance.
+- Demoed all QoS concepts with practical examples of service policies.
 
-Next up: QoS Fundamentals lab: focusing on DiffServ, DSCP markings, and queue behavior.
+Next up: First Hop Gateway Protocols with HSRP, VRRP, and GLBP.
 
-Last updated: October 2025
+Last updated: November 2025
 
 ## Goals
 - [x] 1. Cable and Power On Devices
@@ -42,7 +42,7 @@ Last updated: October 2025
 - [X] 14. CDP/LLDP Device Discovery
 - [X] 15. NAT/NAT Overload (PAT) Simulation
 - [X] 16. QoS Fundamentals
-- [ ] 17. Gateway Redundancy with HSRP
+- [ ] 17. FHGP with HSRP, VRRP, and GLBP
 - [ ] 18. SNMP, NTP, and Syslog Monitoring
 
 ## Key Subnets

@@ -41,7 +41,7 @@ Last updated: October 2025
 - [X] 13. IP ACLs and Security Services
 - [X] 14. CDP/LLDP Device Discovery
 - [X] 15. NAT/NAT Overload (PAT) Simulation
-- [ ] 16. QoS Fundamentals
+- [X] 16. QoS Fundamentals
 - [ ] 17. Gateway Redundancy with HSRP
 - [ ] 18. SNMP, NTP, and Syslog Monitoring
 

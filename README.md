@@ -96,7 +96,8 @@ ccna-homelab/
     ├── lab13_acls_and_security.md
     ├── lab14_cdp_lldp.md
     ├── lab15_nat_overload_pat.md
-    └── lab16_qos_fundamentals.md
+    ├── lab16_qos_fundamentals.md
+    └── lab17_first_hop_redundancy.md
 
  ```
 

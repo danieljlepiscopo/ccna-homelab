@@ -21,7 +21,7 @@ From the last lab, the homelab currently demonstrates:
 - Going through Classification and Marking, Queueing, Policing/Shaping, and Congestion Avoidance.
 - Demoed all QoS concepts with practical examples of service policies.
 
-Next up: First Hop Gateway Protocols with HSRP, VRRP, and GLBP.
+Next up: First Hop Redundancy Protocols with HSRP, VRRP, and GLBP.
 
 Last updated: November 2025
 
@@ -42,7 +42,7 @@ Last updated: November 2025
 - [X] 14. CDP/LLDP Device Discovery
 - [X] 15. NAT/NAT Overload (PAT) Simulation
 - [X] 16. QoS Fundamentals
-- [ ] 17. FHGP with HSRP, VRRP, and GLBP
+- [ ] 17. FHRP with HSRP, VRRP, and GLBP
 - [ ] 18. SNMP, NTP, and Syslog Monitoring
 
 ## Key Subnets

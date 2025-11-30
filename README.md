@@ -15,13 +15,13 @@ Hands-on CCNA 200-301 homelab using real Cisco IOS routers and switches to maste
 ![Logical Topology](topology/logical-diagram.png)
 
 ## Recent Lab Updates
-As of November 2025, this homelab has completed 16 out of 18 planned labs.  
+As of November 2025, this homelab has completed 17 out of 18 planned labs.  
 From the last lab, the homelab currently demonstrates:
-- Understanding why we need QoS and the three main models: Best Effort, IntServ, and DiffServ.
-- Going through Classification and Marking, Queueing, Policing/Shaping, and Congestion Avoidance.
-- Demoed all QoS concepts with practical examples of service policies.
+- Explaining the need for FHRPs and why we use them.
+- Coveering the three options for FHRP: HSRP, VRRP, and GLBP.
+- Gave an overview and configured each of the different FHRPs.
 
-Next up: First Hop Redundancy Protocols with HSRP, VRRP, and GLBP.
+Next up: SNMP, NTP, and Syslog Monitoring
 
 Last updated: November 2025
 
@@ -42,7 +42,7 @@ Last updated: November 2025
 - [X] 14. CDP/LLDP Device Discovery
 - [X] 15. NAT/NAT Overload (PAT) Simulation
 - [X] 16. QoS Fundamentals
-- [ ] 17. FHRP with HSRP, VRRP, and GLBP
+- [X] 17. FHRP with HSRP, VRRP, and GLBP
 - [ ] 18. SNMP, NTP, and Syslog Monitoring
 
 ## Key Subnets

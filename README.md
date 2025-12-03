@@ -15,15 +15,15 @@ Hands-on CCNA 200-301 homelab using real Cisco IOS routers and switches to maste
 ![Logical Topology](topology/logical-diagram.png)
 
 ## Recent Lab Updates
-As of November 2025, this homelab has completed 17 out of 18 planned labs.  
+As of December 2025, this homelab has completed 18 out of 18 planned labs.  
 From the last lab, the homelab currently demonstrates:
-- Explaining the need for FHRPs and why we use them.
-- Coveering the three options for FHRP: HSRP, VRRP, and GLBP.
-- Gave an overview and configured each of the different FHRPs.
+- Explaining what network monitoring is and why it's important.
+- Coveering the three IP Services for Nwotrk Monitoring: SNMP, NTP, and syslog.
+- Gave an overview and configured each of the different IP Services.
 
-Next up: SNMP, NTP, and Syslog Monitoring
+Next up: Go through the missing Labs and write them up
 
-Last updated: November 2025
+Last updated: December 2025
 
 ## Goals
 - [x] 1. Cable and Power On Devices
@@ -43,7 +43,7 @@ Last updated: November 2025
 - [X] 15. NAT/NAT Overload (PAT) Simulation
 - [X] 16. QoS Fundamentals
 - [X] 17. FHRP with HSRP, VRRP, and GLBP
-- [ ] 18. SNMP, NTP, and Syslog Monitoring
+- [X] 18. SNMP, NTP, and Syslog Monitoring
 
 ## Key Subnets
 | Device | Interface | IP Address      |

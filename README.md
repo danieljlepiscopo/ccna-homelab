@@ -17,9 +17,9 @@ Hands-on CCNA 200-301 homelab using real Cisco IOS routers and switches to maste
 ## Recent Lab Updates
 As of December 2025, this homelab has completed 18 out of 18 planned labs.  
 From the last lab, the homelab currently demonstrates:
-- Explaining what network monitoring is and why it's important.
-- Covering the three IP Services for Nowotrk Monitoring: SNMP, NTP, and syslog.
-- Gives an overview and configured each of the different IP Services.
+- Explains what network monitoring is and why it's important.
+- Covering the three IP Services for Network Monitoring: SNMP, NTP, and syslog.
+- Gives an overview and configuration walkthrough of each of these IP Services procotols.
 
 Next up: Go through the missing labs (2-7) and write them up.
 
